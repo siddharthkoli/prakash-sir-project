@@ -1,0 +1,32 @@
+/* Center the page content both vertically and horizontally */
+.center-wrapper {
+	min-height: 100vh; /* full viewport height */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	box-sizing: border-box;
+	background: #f5f7fb; /* subtle page background */
+}
+
+.center-card {
+	width: 100%;
+	max-width: 420px;
+	background: #ffffff;
+	padding: 1.5rem;
+	border-radius: 8px;
+	box-shadow: 0 6px 18px rgba(22, 27, 34, 0.08);
+}
+
+/* Ensure form inputs and buttons stretch full width inside card */
+.center-card .form-control,
+.center-card .btn {
+	width: 100%;
+}
+
+/* Small responsive tweak */
+@media (max-width: 480px) {
+	.center-card {
+		padding: 1rem;
+	}
+}

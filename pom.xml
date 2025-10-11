@@ -1,0 +1,104 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>angular-node-mongo</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <node.version>v22.13.1</node.version>
+    <npm.version>10.9.2</npm.version>
+    <frontend.dir>${project.basedir}/frontend</frontend.dir>
+    <backend.dir>${project.basedir}/backend</backend.dir>
+    <!-- Optional: provide Mongo and PORT via -D properties when running Maven. 
+         Example: mvn package -DMONGO_USER=foo -DMONGO_PASS=bar -DPORT=3000 -->
+    <MONGO_USER></MONGO_USER>
+    <MONGO_PASS></MONGO_PASS>
+    <MONGO_HOST></MONGO_HOST>
+    <MONGO_DB></MONGO_DB>
+    <PORT></PORT>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.github.eirslett</groupId>
+        <artifactId>frontend-maven-plugin</artifactId>
+        <version>1.12.1</version>
+        <executions>
+          <execution>
+            <id>install-node-and-npm</id>
+            <goals><goal>install-node-and-npm</goal></goals>
+            <configuration>
+              <nodeVersion>${node.version}</nodeVersion>
+              <npmVersion>${npm.version}</npmVersion>
+            </configuration>
+          </execution>
+
+            <execution>
+            <id>npm-install-frontend</id>
+            <goals><goal>npm</goal></goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <installDirectory>${project.basedir}</installDirectory>
+              <arguments>install</arguments>
+            </configuration>
+            </execution>
+
+          <execution>
+            <id>npm-build-frontend</id>
+            <goals><goal>npm</goal></goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <installDirectory>${project.basedir}</installDirectory>
+              <arguments>run build -- --output-path=../backend/public</arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>npm-install-backend</id>
+            <goals><goal>npm</goal></goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <workingDirectory>${backend.dir}</workingDirectory>
+              <installDirectory>${project.basedir}</installDirectory>
+              <arguments>install</arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>start-backend</id>
+            <goals><goal>exec</goal></goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>npm</executable>
+          <workingDirectory>${backend.dir}</workingDirectory>
+          <arguments>
+            <argument>run</argument>
+            <argument>start</argument>
+          </arguments>
+          <environmentVariables>
+            <MONGO_USER>${MONGO_USER}</MONGO_USER>
+            <MONGO_PASS>${MONGO_PASS}</MONGO_PASS>
+            <MONGO_HOST>${MONGO_HOST}</MONGO_HOST>
+            <MONGO_DB>${MONGO_DB}</MONGO_DB>
+            <PORT>${PORT}</PORT>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

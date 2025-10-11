@@ -1,0 +1,107 @@
+<div class="min-vh-100" style="background-color: rgba(248,249,250,0.85);">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+        <div class="bg-light p-4 rounded" style="background: rgba(255,255,255,0.85);">
+          <h2 class="mb-3">Inquiry Form</h2>
+          <p class="text-muted small">Note: Your information is kept private and will not be shared outside the
+            organization.</p>
+
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+            <div *ngIf="errorMessage" class="mb-3">
+              <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="firstname" class="form-label">Name <span class="text-danger"><b>*</b></span></label>
+                <input id="firstname" formControlName="firstName" class="form-control" placeholder="First" />
+                <div *ngIf="form.get('firstName')?.touched && form.get('firstName')?.invalid"
+                  class="form-text text-danger">
+                  <div *ngIf="form.get('firstName')?.errors?.['required']">First name is required.</div>
+                  <div *ngIf="form.get('firstName')?.errors?.['pattern']">First name must contain only alphabets.</div>
+                </div>
+              </div>
+              <div class="col-md-6" style="margin-top: 48px;">
+                <!-- <label for="lastname" class="form-label">Last</label> -->
+                <input id="lastname" formControlName="lastName" class="form-control" placeholder="Last" />
+                <div *ngIf="form.get('lastName')?.touched && form.get('lastName')?.invalid"
+                  class="form-text text-danger">
+                  <div *ngIf="form.get('lastName')?.errors?.['required']">Last name is required.</div>
+                  <div *ngIf="form.get('lastName')?.errors?.['pattern']">Last name must contain only alphabets.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label">Email Address <span class="text-danger"><b>*</b></span></label>
+              <input id="email" formControlName="email" class="form-control" placeholder="you@example.com" />
+              <div *ngIf="form.get('email')?.touched && form.get('email')?.invalid" class="form-text text-danger">
+                <div *ngIf="form.get('email')?.errors?.['required']">Email is required.</div>
+                <div *ngIf="form.get('email')?.errors?.['pattern']">Enter a valid email address.</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone <span class="text-danger"><b>*</b></span></label>
+              <input id="phone" formControlName="phone" class="form-control" placeholder="(555) 555-5555" maxlength="10" />
+              <div *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid" class="form-text text-danger">
+                <div *ngIf="form.get('phone')?.errors?.['required']">Phone is required.</div>
+                <div *ngIf="form.get('phone')?.errors?.['pattern']">Enter a valid phone number.</div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Address <span class="text-danger"><b>*</b></span></label>
+              <input formControlName="streetAddress1" class="form-control mb-2" placeholder="Street Address" />
+              <input formControlName="streetAddress2" class="form-control mb-2" placeholder="Address 2" />
+              <div class="row g-2">
+                <div class="col-md-8">
+                  <input formControlName="city" class="form-control" placeholder="City" />
+                  <div *ngIf="form.get('city')?.touched && form.get('city')?.invalid" class="form-text text-danger">
+                    <div *ngIf="form.get('city')?.errors?.['required']">City is required.</div>
+                    <div *ngIf="form.get('city')?.errors?.['pattern']">Enter a valid city name.</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <input formControlName="state" class="form-control" placeholder="State/Province/Region" />
+                </div>
+              </div>
+              <div class="mt-2 col-md-4 px-0">
+                <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="6"/>
+                <div *ngIf="form.get('zip')?.touched && form.get('zip')?.invalid" class="form-text text-danger">
+                  <div *ngIf="form.get('zip')?.errors?.['required']">Zip/Postal Code is required.</div>
+                  <div *ngIf="form.get('zip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">If in the metropolitan area, please choose where you would like to meet:</label>
+              <select class="form-select" formControlName="whereToMeet">
+                <option value="">-- Select --</option>
+                <option value="option1">City Center</option>
+                <option value="option2">Suburb A</option>
+                <option value="option3">Suburb B</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Other comments welcome</label>
+              <textarea formControlName="comments" rows="8" class="form-control"></textarea>
+            </div>
+
+            <div class="d-flex align-items-center">
+              <button type="submit" class="btn btn-primary me-3" [disabled]="form.invalid || submitting">
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2" role="status"
+                  aria-hidden="true"></span>
+                Submit
+              </button>
+              <small class="text-muted">We may contact you to follow up on your inquiry.</small>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
