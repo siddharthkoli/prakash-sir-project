@@ -14,11 +14,11 @@
     <frontend.dir>${project.basedir}/frontend</frontend.dir>
     <backend.dir>${project.basedir}/backend</backend.dir>
     <!-- Optional: provide Mongo and PORT via -D properties when running Maven. 
-         Example: mvn package -DMONGO_USER=foo -DMONGO_PASS=bar -DPORT=3000 -->
-    <MONGO_USER></MONGO_USER>
-    <MONGO_PASS></MONGO_PASS>
-    <MONGO_HOST></MONGO_HOST>
-    <MONGO_DB></MONGO_DB>
+         Example: mvn package -DSQL_USER=foo -DSQL_PASS=bar -DPORT=3000 -->
+    <SQL_USER></SQL_USER>
+    <SQL_PASS></SQL_PASS>
+    <SQL_HOST></SQL_HOST>
+    <SQL_DB></SQL_DB>
     <PORT></PORT>
   </properties>
 
@@ -91,10 +91,10 @@
             <argument>start</argument>
           </arguments>
           <environmentVariables>
-            <MONGO_USER>${MONGO_USER}</MONGO_USER>
-            <MONGO_PASS>${MONGO_PASS}</MONGO_PASS>
-            <MONGO_HOST>${MONGO_HOST}</MONGO_HOST>
-            <MONGO_DB>${MONGO_DB}</MONGO_DB>
+            <SQL_USER>${SQL_USER}</SQL_USER>
+            <SQL_PASS>${SQL_PASS}</SQL_PASS>
+            <SQL_HOST>${SQL_HOST}</SQL_HOST>
+            <SQL_DB>${SQL_DB}</SQL_DB>
             <PORT>${PORT}</PORT>
           </environmentVariables>
         </configuration>

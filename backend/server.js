@@ -1,9 +1,8 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const UserInquiry = require('./models/userInquiry.model');
+
 
 // Load environment variables when not preloaded by node -r
 try {
@@ -18,32 +17,27 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "public", "browser")));
+const sql = require('mssql');
+const sqlConfig = {
+  user: process.env.SQL_USER,
+  password: process.env.SQL_PASS,
+  server: process.env.SQL_HOST,      // example: "mydb.database.windows.net"
+  database: process.env.SQL_DB,
+  pool: { max: 10, min: 0, idleTimeoutMillis: 15000 },
+  options: {
+    encrypt: true, // required for Azure
+    trustServerCertificate: false
+  }
+};
 
-// Build MongoDB URI from env variables
-const mongoUser = process.env.MONGO_USER;
-const mongoPass = process.env.MONGO_PASS;
-const mongoHost = process.env.MONGO_HOST || 'cluster0.6gx8cuw.mongodb.net';
-const mongoDb = process.env.MONGO_DB || '';
-
-let MONGO_URI;
-if (mongoUser && mongoPass) {
-  const dbSegment = mongoDb ? `/${mongoDb}` : '';
-  MONGO_URI = `mongodb+srv://${encodeURIComponent(mongoUser)}:${encodeURIComponent(mongoPass)}@${mongoHost}${dbSegment}?retryWrites=true&w=majority`;
-} else if (process.env.MONGO_URI) {
-  MONGO_URI = process.env.MONGO_URI;
-} else {
-  console.error('MongoDB credentials not provided via environment variables. Set MONGO_USER and MONGO_PASS or MONGO_URI.');
-  process.exit(1);
+try {
+  sql.connect(sqlConfig)
+    .then(() => console.log("Connected to Azure SQL"))
+    .catch(err => console.error("SQL connection error:", err));
+} catch (err) {
+  console.error("Error setting up SQL connection:", err);
 }
 
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('MongoDB connected'))
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
 
 // API endpoint
 app.post('/api/userInquiry', async (req, res) => {
@@ -64,11 +58,29 @@ app.post('/api/userInquiry', async (req, res) => {
       return res.status(400).json({ message: 'firstName and lastName are required' });
     }
 
-    const userInquiry = new UserInquiry({ firstName, lastName, email, phone, address, whereToMeet, comments });
-    await userInquiry.validate();
-    await userInquiry.save();
-    console.log('UserInquiry saved:', userInquiry);
-    return res.status(201).json({ message: 'UserInquiry created', userInquiry });
+    const pool = await sql.connect(sqlConfig);
+
+    const result = await pool.request()
+      .input('firstName', sql.NVarChar, firstName)
+      .input('lastName', sql.NVarChar, lastName)
+      .input('email', sql.NVarChar, email)
+      .input('phone', sql.NVarChar, phone)
+      .input('street1', sql.NVarChar, address.streetAddress1)
+      .input('street2', sql.NVarChar, address.streetAddress2 || null)
+      .input('city', sql.NVarChar, address.city)
+      .input('state', sql.NVarChar, address.state)
+      .input('zip', sql.NVarChar, address.zip)
+      .input('whereToMeet', sql.NVarChar, whereToMeet)
+      .input('comments', sql.NVarChar, comments)
+      .query(`
+        INSERT INTO UserInquiry
+        (firstName, lastName, email, phone, streetAddress1, streetAddress2, city, state, zip, whereToMeet, comments)
+        VALUES (@firstName, @lastName, @email, @phone, @street1, @street2, @city, @state, @zip, @whereToMeet, @comments)
+      `);
+
+    console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
+
+    return res.status(201).json({ message: 'UserInquiry created' });
   } catch (err) {
     console.error(err);
     if (err.name === 'ValidationError') {
