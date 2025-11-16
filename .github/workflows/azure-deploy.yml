@@ -1,0 +1,56 @@
+name: Azure Web App CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # Install Node 22 (or whatever version your Azure app uses)
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    # Build Angular (frontend/)
+    - name: Install frontend deps
+      working-directory: frontend
+      run: npm install
+
+    - name: Build Angular
+      working-directory: frontend
+      run: npm run build -- --configuration production
+
+    # Copy Angular build → backend/public/browser
+    - name: Copy Angular build to backend
+      run: |
+        rm -rf backend/public/browser
+        mkdir -p backend/public/browser
+        cp -r frontend/dist/browser/* backend/public/browser/
+
+    # Install backend deps
+    - name: Install backend deps
+      working-directory: backend
+      run: npm install --production
+
+    # Create deployment zip
+    - name: Zip backend folder
+      run: |
+        cd backend
+        zip -r ../release.zip .
+
+    # Deploy to Azure
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: "nymasons"
+        package: release.zip
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
