@@ -45,7 +45,7 @@ jobs:
     - name: Zip backend folder
       run: |
         cd backend
-        zip -r ../release.zip .
+        zip -r ../release.zip ./*
 
     # Deploy to Azure
     - name: Deploy to Azure Web App
