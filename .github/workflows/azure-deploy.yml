@@ -34,7 +34,7 @@ jobs:
       run: |
         rm -rf backend/public/browser
         mkdir -p backend/public/browser
-        cp -r frontend/dist/browser/* backend/public/browser/
+        cp -r frontend/dist/frontend/browser/* backend/public/browser/
 
     # Install backend deps
     - name: Install backend deps
