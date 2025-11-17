@@ -1,0 +1,6 @@
+- [ x ] header and footer
+- [ x ] populate city and state from zip
+- [ x ] add best time to call and alternate number
+- [   ] add favicon
+- [   ] add title
+- [   ] update backend tables and api
