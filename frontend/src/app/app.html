@@ -1,3 +1,19 @@
+<div style="background-color: #152549; padding: 20px 0;">
+  <div class="container-fluid" style="padding: 0 80px;">
+    <div class="row align-items-center">
+      <div class="col-lg-8 offset-lg-2">
+        <div style="display: flex; align-items: center; gap: 20px;">
+          <div style="flex-shrink: 0;">
+            <a href="https://nymasons.org/">
+              <img src="/assets/NYM-wordmark-light@3x.png" height="50%" width="50%" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="min-vh-100" style="background-color: rgba(248,249,250,0.85);">
   <div class="container py-5">
     <div class="row">
@@ -44,7 +60,8 @@
 
             <div class="mb-3">
               <label for="phone" class="form-label">Phone <span class="text-danger"><b>*</b></span></label>
-              <input id="phone" formControlName="phone" class="form-control" placeholder="(555) 555-5555" maxlength="10" />
+              <input id="phone" formControlName="phone" class="form-control" placeholder="(555) 555-5555"
+                maxlength="10" />
               <div *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid" class="form-text text-danger">
                 <div *ngIf="form.get('phone')?.errors?.['required']">Phone is required.</div>
                 <div *ngIf="form.get('phone')?.errors?.['pattern']">Enter a valid phone number.</div>
@@ -54,8 +71,10 @@
             <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label for="alternatePhone" class="form-label">Alternate Phone</label>
-                <input id="alternatePhone" formControlName="alternatePhone" class="form-control" placeholder="(555) 555-5555" maxlength="10" />
-                <div *ngIf="form.get('alternatePhone')?.touched && form.get('alternatePhone')?.invalid" class="form-text text-danger">
+                <input id="alternatePhone" formControlName="alternatePhone" class="form-control"
+                  placeholder="(555) 555-5555" maxlength="10" />
+                <div *ngIf="form.get('alternatePhone')?.touched && form.get('alternatePhone')?.invalid"
+                  class="form-text text-danger">
                   <div *ngIf="form.get('alternatePhone')?.errors?.['pattern']">Enter a valid phone number.</div>
                 </div>
               </div>
@@ -71,7 +90,7 @@
 
             <div class="mb-3">
               <label class="form-label">Zip / Postal Code <span class="text-danger"><b>*</b></span></label>
-              <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="5"/>
+              <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="5" />
               <div *ngIf="form.get('zip')?.touched && form.get('zip')?.invalid" class="form-text text-danger">
                 <div *ngIf="form.get('zip')?.errors?.['required']">Zip/Postal Code is required.</div>
                 <div *ngIf="form.get('zip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
@@ -81,13 +100,14 @@
             <div class="row g-2 mb-3">
               <div class="col-md-8">
                 <label for="city" class="form-label">City <span class="text-danger"><b>*</b></span></label>
-                  <input id="city" formControlName="city" class="form-control" placeholder="City" />
+                <input id="city" formControlName="city" class="form-control" placeholder="City" />
                 <div *ngIf="form.get('city')?.touched && form.get('city')?.invalid" class="form-text text-danger">
                   <div *ngIf="form.get('city')?.errors?.['required']">City is required.</div>
                 </div>
               </div>
               <div class="col-md-4">
-                <label for="state" class="form-label">State/Province/Region <span class="text-danger"><b>*</b></span></label>
+                <label for="state" class="form-label">State/Province/Region <span
+                    class="text-danger"><b>*</b></span></label>
                 <input id="state" formControlName="state" class="form-control" placeholder="State/Province/Region" />
                 <div *ngIf="form.get('state')?.touched && form.get('state')?.invalid" class="form-text text-danger">
                   <div *ngIf="form.get('state')?.errors?.['required']">State is required.</div>
@@ -124,3 +144,51 @@
     </div>
   </div>
 </div>
+
+<footer class="site-footer" style="background-color: #152549;">
+  <div style="padding-top: 90px; padding-left: 150px; padding-bottom: 15px;">
+    <div class="container" style="padding-bottom: 40px;">
+      <div class="row">
+        <div class="col">
+          <img src="/assets/NYM_logo-combo-gray.png" alt="NYM" style="height:110px; width:auto;">
+        </div>
+        <div class="col">
+          <div style="display: flex;">
+            <div style="display: inline-block;
+              border: 3px solid #AB876D;
+              padding: 5px 18px;
+              color: #fff;
+              margin-bottom: 18px;">CONTACT</div>
+          </div>
+          <div style="font-weight: 300; color: #fff; font-size: large;">Grand Lodge of the State of New York</div>
+          <div style="font-weight: 300; color: #fff; font-size: large;">71 West 23rd Street</div>
+          <div style="font-weight: 300; color: #fff; font-size: large;">New York, NY 10010</div>
+          <div style="font-weight: 300; color: #fff; font-size: large; margin-top: 15px;">800.362.7664</div>
+        </div>
+        <div class="col">
+          <div style="display: flex; flex-direction: row; align-items: center;">
+            <div style="padding: 10px;">
+              <a href="#" style="color: #AB876D; text-decoration: none;">
+                <img height="30px" width="30px" src="https://img.icons8.com/material-sharp/48/9E765A/facebook-f.png"
+                  alt="facebook" />
+              </a>
+            </div>
+            <div style="padding: 10px;">
+              <a href="#" style="color: #AB876D; text-decoration: none;">
+                <img height="40px" width="40px" src="https://img.icons8.com/sf-regular/48/9E765A/instagram-new.png"
+                  alt="instagram" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: row;">
+      <div style="color: #e5e3e3; padding: 20px 0; font-size: 13px;">&copy;2025 New York Masons. All Rights Reserved.</div>
+      <div style="margin-left: auto; display: flex; flex-direction: row; margin-right: 150px;">
+        <a href="https://nymasons.org/privacy-policy/" target="_blank" style="color: #AB876D; padding: 20px 15px; font-size: 13px; text-decoration: underline; font-weight: lighter;">PRIVACY POLICY</a>
+        <a href="https://nymasons.org/terms-conditions/" target="_blank" style="color: #AB876D; padding: 20px 15px; font-size: 13px; text-decoration: underline; font-weight: lighter;">TERMS & CONDITIONS</a>
+      </div>
+    </div>
+  </div>
+</footer>
