@@ -4,6 +4,6 @@
 - [ x ] add favicon
 - [ x ] add title
 - [ - ] add proper font
-- [   ] update backend tables and api
-- [   ] add captcha
 - [ x ] add utm_source
+- [ x ] update backend tables and api
+- [   ] add captcha
