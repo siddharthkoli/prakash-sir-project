@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SubmissionService } from './submission.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { TimeoutError } from 'rxjs';
@@ -20,8 +20,13 @@ export class FormComponent {
     form: FormGroup;
     submitting = false;
     errorMessage: string | null = null;
+    utmSource: string | null = null;
 
-    constructor(private fb: FormBuilder, private submissionService: SubmissionService, private router: Router, private cdr: ChangeDetectorRef, private http: HttpClient) {
+    constructor(private fb: FormBuilder, private submissionService: SubmissionService, private router: Router, private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
+        // Extract utm_source from query parameters
+        this.route.queryParams.subscribe(params => {
+            this.utmSource = params['utm_source'] || null;
+        });
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         this.form = this.fb.group({
@@ -86,7 +91,8 @@ export class FormComponent {
                     zip: this.form.get('zip')?.value
                 },
                 whereToMeet: this.form.get('whereToMeet')?.value,
-                comments: this.form.get('comments')?.value || ''
+                comments: this.form.get('comments')?.value || '',
+                utmSource: this.utmSource
             }
 
             console.log(this.form);

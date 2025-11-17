@@ -1,9 +1,9 @@
 - [ x ] header and footer
 - [ x ] populate city and state from zip
 - [ x ] add best time to call and alternate number
-- [   ] add favicon
-- [   ] add title
+- [ x ] add favicon
+- [ x ] add title
+- [ - ] add proper font
 - [   ] update backend tables and api
-- [   ] add proper font
 - [   ] add captcha
-- [   ] add utm_source
+- [ x ] add utm_source

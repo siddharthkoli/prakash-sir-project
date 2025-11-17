@@ -51,7 +51,8 @@ app.post('/api/userInquiry', async (req, res) => {
       bestTimeToContact,
       address,
       whereToMeet,
-      comments
+      comments,
+      utmSource
     } = req.body;
 
     console.log(`Received data: ${JSON.stringify(req.body)}`);
@@ -74,10 +75,11 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('zip', sql.NVarChar, address.zip)
       .input('whereToMeet', sql.NVarChar, whereToMeet)
       .input('comments', sql.NVarChar, comments)
+      .input('utmSource', sql.NVarChar, utmSource || null)
       .query(`
         INSERT INTO UserInquiry
-        (firstName, lastName, email, phone, alternatePhone, bestTimeToContact, city, state, zip, whereToMeet, comments)
-        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @whereToMeet, @comments)
+        (firstName, lastName, email, phone, alternatePhone, bestTimeToContact, city, state, zip, whereToMeet, comments, utmSource)
+        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @whereToMeet, @comments, @utmSource)
       `);
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
