@@ -47,6 +47,8 @@ app.post('/api/userInquiry', async (req, res) => {
       lastName,
       email,
       phone,
+      alternatePhone,
+      bestTimeToContact,
       address,
       whereToMeet,
       comments
@@ -55,7 +57,7 @@ app.post('/api/userInquiry', async (req, res) => {
     console.log(`Received data: ${JSON.stringify(req.body)}`);
 
     if (!firstName || !lastName || !email || !phone || !address) {
-      return res.status(400).json({ message: 'firstName and lastName are required' });
+      return res.status(400).json({ message: 'firstName, lastName, email, phone, and address are required' });
     }
 
     const pool = await sql.connect(sqlConfig);
@@ -65,8 +67,8 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('lastName', sql.NVarChar, lastName)
       .input('email', sql.NVarChar, email)
       .input('phone', sql.NVarChar, phone)
-      .input('street1', sql.NVarChar, address.streetAddress1)
-      .input('street2', sql.NVarChar, address.streetAddress2 || null)
+      .input('alternatePhone', sql.NVarChar, alternatePhone || null)
+      .input('bestTimeToContact', sql.NVarChar, bestTimeToContact)
       .input('city', sql.NVarChar, address.city)
       .input('state', sql.NVarChar, address.state)
       .input('zip', sql.NVarChar, address.zip)
@@ -74,8 +76,8 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('comments', sql.NVarChar, comments)
       .query(`
         INSERT INTO UserInquiry
-        (firstName, lastName, email, phone, streetAddress1, streetAddress2, city, state, zip, whereToMeet, comments)
-        VALUES (@firstName, @lastName, @email, @phone, @street1, @street2, @city, @state, @zip, @whereToMeet, @comments)
+        (firstName, lastName, email, phone, alternatePhone, bestTimeToContact, city, state, zip, whereToMeet, comments)
+        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @whereToMeet, @comments)
       `);
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);

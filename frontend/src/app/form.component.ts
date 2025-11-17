@@ -29,6 +29,8 @@ export class FormComponent {
             lastName: ['', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]],
             email: ['', [Validators.required, Validators.pattern(emailRegex)]],
             phone: ['', [Validators.required, Validators.pattern(/^[0-9()+\-\s]{10}$/)]],
+            alternatePhone: ['', [Validators.pattern(/^[0-9()+\-\s]{10}$/)]],
+            bestTimeToContact: ['anyday'],
             city: ['', [Validators.required]],
             state: ['', [Validators.required]],
             zip: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
@@ -49,8 +51,6 @@ export class FormComponent {
     }
 
     fetchCityAndState(zip: string) {
-        // Using ZipCodeAPI or similar service - adjust the URL based on your backend API
-        // For this example, we'll use a free zip code API
         this.http.get<any>(`https://api.zippopotam.us/us/${zip}`).subscribe({
             next: (response) => {
                 if (response && response.places && response.places.length > 0) {
@@ -78,6 +78,8 @@ export class FormComponent {
                 lastName: this.form.get('lastName')?.value,
                 email: this.form.get('email')?.value,
                 phone: this.form.get('phone')?.value,
+                alternatePhone: this.form.get('alternatePhone')?.value || '',
+                bestTimeToContact: this.form.get('bestTimeToContact')?.value,
                 address: {
                     city: this.form.get('city')?.value,
                     state: this.form.get('state')?.value,

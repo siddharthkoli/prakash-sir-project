@@ -51,6 +51,24 @@
               </div>
             </div>
 
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="alternatePhone" class="form-label">Alternate Phone</label>
+                <input id="alternatePhone" formControlName="alternatePhone" class="form-control" placeholder="(555) 555-5555" maxlength="10" />
+                <div *ngIf="form.get('alternatePhone')?.touched && form.get('alternatePhone')?.invalid" class="form-text text-danger">
+                  <div *ngIf="form.get('alternatePhone')?.errors?.['pattern']">Enter a valid phone number.</div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="bestTimeToContact" class="form-label">Best Time to Contact</label>
+                <select id="bestTimeToContact" class="form-select" formControlName="bestTimeToContact">
+                  <option value="weekday">Weekday</option>
+                  <option value="weekend">Weekend</option>
+                  <option value="anyday">Anyday</option>
+                </select>
+              </div>
+            </div>
+
             <div class="mb-3">
               <label class="form-label">Zip / Postal Code <span class="text-danger"><b>*</b></span></label>
               <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="5"/>
