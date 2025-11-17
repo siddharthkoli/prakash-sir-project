@@ -52,26 +52,27 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Address <span class="text-danger"><b>*</b></span></label>
-              <input formControlName="streetAddress1" class="form-control mb-2" placeholder="Street Address" />
-              <input formControlName="streetAddress2" class="form-control mb-2" placeholder="Address 2" />
-              <div class="row g-2">
-                <div class="col-md-8">
-                  <input formControlName="city" class="form-control" placeholder="City" />
-                  <div *ngIf="form.get('city')?.touched && form.get('city')?.invalid" class="form-text text-danger">
-                    <div *ngIf="form.get('city')?.errors?.['required']">City is required.</div>
-                    <div *ngIf="form.get('city')?.errors?.['pattern']">Enter a valid city name.</div>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <input formControlName="state" class="form-control" placeholder="State/Province/Region" />
+              <label class="form-label">Zip / Postal Code <span class="text-danger"><b>*</b></span></label>
+              <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="5"/>
+              <div *ngIf="form.get('zip')?.touched && form.get('zip')?.invalid" class="form-text text-danger">
+                <div *ngIf="form.get('zip')?.errors?.['required']">Zip/Postal Code is required.</div>
+                <div *ngIf="form.get('zip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-8">
+                <label for="city" class="form-label">City <span class="text-danger"><b>*</b></span></label>
+                  <input id="city" formControlName="city" class="form-control" placeholder="City" />
+                <div *ngIf="form.get('city')?.touched && form.get('city')?.invalid" class="form-text text-danger">
+                  <div *ngIf="form.get('city')?.errors?.['required']">City is required.</div>
                 </div>
               </div>
-              <div class="mt-2 col-md-4 px-0">
-                <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="6"/>
-                <div *ngIf="form.get('zip')?.touched && form.get('zip')?.invalid" class="form-text text-danger">
-                  <div *ngIf="form.get('zip')?.errors?.['required']">Zip/Postal Code is required.</div>
-                  <div *ngIf="form.get('zip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
+              <div class="col-md-4">
+                <label for="state" class="form-label">State/Province/Region <span class="text-danger"><b>*</b></span></label>
+                <input id="state" formControlName="state" class="form-control" placeholder="State/Province/Region" />
+                <div *ngIf="form.get('state')?.touched && form.get('state')?.invalid" class="form-text text-danger">
+                  <div *ngIf="form.get('state')?.errors?.['required']">State is required.</div>
                 </div>
               </div>
             </div>

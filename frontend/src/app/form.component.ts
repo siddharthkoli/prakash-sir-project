@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { TimeoutError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-form',
@@ -20,7 +21,7 @@ export class FormComponent {
     submitting = false;
     errorMessage: string | null = null;
 
-    constructor(private fb: FormBuilder, private submissionService: SubmissionService, private router: Router, private cdr: ChangeDetectorRef) {
+    constructor(private fb: FormBuilder, private submissionService: SubmissionService, private router: Router, private cdr: ChangeDetectorRef, private http: HttpClient) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
         this.form = this.fb.group({
@@ -28,13 +29,41 @@ export class FormComponent {
             lastName: ['', [Validators.required, Validators.pattern(/^[A-Za-z]+$/)]],
             email: ['', [Validators.required, Validators.pattern(emailRegex)]],
             phone: ['', [Validators.required, Validators.pattern(/^[0-9()+\-\s]{10}$/)]],
-            streetAddress1: ['', [Validators.required, Validators.minLength(3)]],
-            streetAddress2: [''],
-            city: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s.'-]{2,}$/)]],
-            state: ['', [Validators.required, Validators.pattern(/^[A-Za-z\s.'-]{2,}$/)]],
-            zip: ['', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]],
+            city: ['', [Validators.required]],
+            state: ['', [Validators.required]],
+            zip: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
             whereToMeet: [''],
             comments: ['']
+        });
+
+        // disable city and state so they can only be populated from the zip lookup
+        this.form.get('city')?.disable();
+        this.form.get('state')?.disable();
+
+        // Listen for zip code changes and auto-populate city/state
+        this.form.get('zip')?.valueChanges.subscribe(zip => {
+            if (zip && /^[0-9]{5}$/.test(zip)) {
+                this.fetchCityAndState(zip);
+            }
+        });
+    }
+
+    fetchCityAndState(zip: string) {
+        // Using ZipCodeAPI or similar service - adjust the URL based on your backend API
+        // For this example, we'll use a free zip code API
+        this.http.get<any>(`https://api.zippopotam.us/us/${zip}`).subscribe({
+            next: (response) => {
+                if (response && response.places && response.places.length > 0) {
+                    const place = response.places[0];
+                    this.form.patchValue({
+                        city: place['place name'],
+                        state: place['state']
+                    });
+                }
+            },
+            error: (err) => {
+                console.log('Could not fetch city/state for zip code');
+            }
         });
     }
 
@@ -50,8 +79,6 @@ export class FormComponent {
                 email: this.form.get('email')?.value,
                 phone: this.form.get('phone')?.value,
                 address: {
-                    streetAddress1: this.form.get('streetAddress1')?.value,
-                    streetAddress2: this.form.get('streetAddress2')?.value,
                     city: this.form.get('city')?.value,
                     state: this.form.get('state')?.value,
                     zip: this.form.get('zip')?.value
