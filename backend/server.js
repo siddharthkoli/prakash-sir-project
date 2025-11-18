@@ -30,6 +30,12 @@ const sqlConfig = {
   }
 };
 
+console.log("SQL Config:", {
+  user: sqlConfig.user,
+  server: sqlConfig.server,
+  database: sqlConfig.database
+});
+
 try {
   sql.connect(sqlConfig)
     .then(() => console.log("Connected to Azure SQL"))
