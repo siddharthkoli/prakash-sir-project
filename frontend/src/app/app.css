@@ -30,3 +30,21 @@
 		padding: 1rem;
 	}
 }
+
+.footer-padding {
+  padding-top: 90px;
+  padding-bottom: 15px;
+  padding-left: 20px;   /* mobile */
+}
+
+@media (min-width: 768px) {
+  .footer-padding {
+    padding-left: 80px; /* tablets */
+  }
+}
+
+@media (min-width: 1200px) {
+  .footer-padding {
+    padding-left: 150px; /* desktop */
+  }
+}
