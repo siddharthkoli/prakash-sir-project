@@ -1,19 +1,18 @@
-DROP TABLE northstar.dbo.UserInquiry;
-
-CREATE TABLE northstar.dbo.UserInquiry (
-	id int IDENTITY(1,1) NOT NULL,
-	firstName nvarchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	lastName nvarchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	email nvarchar(255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	phone nvarchar(10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	alternatePhone nvarchar(10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	bestTimeToContact nvarchar(10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	city nvarchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	state nvarchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	zip nvarchar(5) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-	whereToMeet nvarchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	comments nvarchar(MAX) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	utmSource nvarchar(100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-	createdAt datetime2 DEFAULT sysutcdatetime() NULL,
-	CONSTRAINT PK__UserInqu__3213E83F0E4E9FA7 PRIMARY KEY (id)
+-- Create UserInquiries table
+CREATE TABLE UserInquiry (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    first_name NVARCHAR(100) NOT NULL,
+    last_name NVARCHAR(100) NOT NULL,
+    email NVARCHAR(255) NOT NULL,
+    phone NVARCHAR(20) NOT NULL,
+    alternate_phone NVARCHAR(20),
+    best_time_to_contact NVARCHAR(50) NOT NULL,
+    city NVARCHAR(100) NOT NULL,
+    state NVARCHAR(100) NOT NULL,
+    zip_code NVARCHAR(10) NOT NULL,
+    where_to_meet NVARCHAR(MAX),
+    comments NVARCHAR(MAX),
+    utm_source NVARCHAR(100),
+    status nvarchar(10) DEFAULT 'New',
+    created_at DATETIME2 DEFAULT GETDATE()
 );

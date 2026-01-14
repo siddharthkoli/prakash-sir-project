@@ -81,10 +81,10 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('zip', sql.NVarChar, address.zip)
       .input('whereToMeet', sql.NVarChar, whereToMeet)
       .input('comments', sql.NVarChar, comments)
-      .input('utmSource', sql.NVarChar, utmSource || null)
+      .input('utmSource', sql.NVarChar, utmSource || 'organic')
       .query(`
         INSERT INTO UserInquiry
-        (firstName, lastName, email, phone, alternatePhone, bestTimeToContact, city, state, zip, whereToMeet, comments, utmSource)
+        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, where_to_meet, comments, utm_source)
         VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @whereToMeet, @comments, @utmSource)
       `);
 
