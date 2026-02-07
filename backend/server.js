@@ -100,6 +100,30 @@ app.post('/api/userInquiry', async (req, res) => {
   }
 });
 
+// Health check endpoint for Azure
+app.get('/health', async (req, res) => {
+  try {
+    const pool = await sql.connect(sqlConfig);
+    const result = await pool.request().query('SELECT 1 as [value]');
+    
+    if (result.recordset && result.recordset.length > 0) {
+      return res.status(200).json({ 
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: 'connected'
+      });
+    }
+  } catch (err) {
+    console.error('Health check error:', err);
+    return res.status(503).json({ 
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      database: 'disconnected',
+      error: err.message
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
 
