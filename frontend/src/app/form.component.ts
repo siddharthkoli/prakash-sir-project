@@ -21,11 +21,27 @@ export class FormComponent {
     submitting = false;
     errorMessage: string | null = null;
     utmSource: string | null = null;
+    utmMedium: string | null = null;
+    utmCampaign: string | null = null;
+    utmContent: string | null = null;
+    utmTerm: string | null = null;
+    gclid: string | null = null;
+    fbclid: string | null = null;
+    landingPageUrl: string | null = null;
+    referrerUrl: string | null = null;
 
     constructor(private fb: FormBuilder, private submissionService: SubmissionService, private router: Router, private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
         // Extract utm_source from query parameters
         this.route.queryParams.subscribe(params => {
             this.utmSource = params['utm_source'] || null;
+            this.utmMedium = params['utm_medium'] || null;
+            this.utmCampaign = params['utm_campaign'] || null;
+            this.utmContent = params['utm_content'] || null;
+            this.utmTerm = params['utm_term'] || null;
+            this.gclid = params['gclid'] || null;
+            this.fbclid = params['fbclid'] || null;
+            this.landingPageUrl = window.location.href;
+            this.referrerUrl = document.referrer || null;
         });
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -38,19 +54,29 @@ export class FormComponent {
             bestTimeToContact: ['anyday'],
             city: ['', [Validators.required]],
             state: ['', [Validators.required]],
+            county: ['', [Validators.required]],
             zip: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+            firstResponder: ['', [Validators.required]],
+            faith: ['', [Validators.required]],
             whereToMeet: [''],
-            comments: ['']
+            preferredContactMethod: ['Phone', Validators.required],
+            age: ['', [Validators.required]],
+            veteran: ['', [Validators.required]],
+            lawEnforcement: ['', [Validators.required]],
+            employmentStatus: ['Full Time', Validators.required],
+            comments: [''],
         });
 
         // disable city and state so they can only be populated from the zip lookup
         this.form.get('city')?.disable();
         this.form.get('state')?.disable();
+        this.form.get('county')?.disable();
 
         // Listen for zip code changes and auto-populate city/state
         this.form.get('zip')?.valueChanges.subscribe(zip => {
             if (zip && /^[0-9]{5}$/.test(zip)) {
                 this.fetchCityAndState(zip);
+                this.fetchCounty(zip);
             }
         });
     }
@@ -68,6 +94,25 @@ export class FormComponent {
             },
             error: (err) => {
                 console.log('Could not fetch city/state for zip code');
+            }
+        });
+    }
+
+    fetchCounty(zip: string) {
+        const url = "https://api.api-ninjas.com/v1/county?zipcode=" + zip;
+        const headers = {
+            'X-Api-Key': 'aYh25gRvcQhKCUXEazat9Z5KhSkMDhOBheKd3TjV'
+        }
+        this.http.get<any>(url, { headers }).subscribe({
+            next: (response) => {
+                if (response && response.length > 0 && response[0].county_name) {
+                    this.form.patchValue({
+                        county: response[0].county_name.replace(' County', '') // remove "County" suffix if present
+                    });
+                }
+            },
+            error: (err) => {
+                console.log('Could not fetch county for zip code');
             }
         });
     }
@@ -90,9 +135,25 @@ export class FormComponent {
                     state: this.form.get('state')?.value,
                     zip: this.form.get('zip')?.value
                 },
+                county: this.form.get('county')?.value,
                 whereToMeet: this.form.get('whereToMeet')?.value,
+                preferredContactMethod: this.form.get('preferredContactMethod')?.value,
+                employmentStatus: this.form.get('employmentStatus')?.value,
                 comments: this.form.get('comments')?.value || '',
-                utmSource: this.utmSource
+                age: this.form.get('age')?.value,
+                faith: this.form.get('faith')?.value,
+                veteran: this.form.get('veteran')?.value,
+                firstResponder: this.form.get('firstResponder')?.value,
+                lawEnforcement: this.form.get('lawEnforcement')?.value,
+                utmSource: this.utmSource,
+                utm_medium: this.utmMedium,
+                utm_campaign: this.utmCampaign,
+                utm_content: this.utmContent,
+                utm_term: this.utmTerm,
+                gclid: this.gclid,
+                fbclid: this.fbclid,
+                landing_page_url: this.landingPageUrl,
+                referrer_url: this.referrerUrl
             }
 
             console.log(this.form);
@@ -106,6 +167,8 @@ export class FormComponent {
             ).subscribe({
                 next: (resp) => {
                     this.form.reset();
+                    // restore defaults after reset
+                    try { this.form.get('preferredContactMethod')?.setValue('either'); } catch (_) { /* noop */ }
                     this.router.navigate(['/success']);
                 },
                 error: (err: any) => {

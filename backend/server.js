@@ -58,7 +58,23 @@ app.post('/api/userInquiry', async (req, res) => {
       address,
       whereToMeet,
       comments,
-      utmSource
+      utmSource,
+      county,
+      firstResponder,
+      faith,
+      lawEnforcement,
+      age,
+      veteran,
+      preferredContactMethod,
+      employmentStatus,
+      utm_medium,
+      utm_campaign,
+      utm_content,
+      utm_term,
+      gclid,
+      fbclid,
+      landing_page_url,
+      referrer_url
     } = req.body;
 
     console.log(`Received data: ${JSON.stringify(req.body)}`);
@@ -79,13 +95,29 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('city', sql.NVarChar, address.city)
       .input('state', sql.NVarChar, address.state)
       .input('zip', sql.NVarChar, address.zip)
-      .input('whereToMeet', sql.NVarChar, whereToMeet)
-      .input('comments', sql.NVarChar, comments)
+      .input('county', sql.NVarChar, county || null)
+      .input('whereToMeet', sql.NVarChar, whereToMeet || null)
+      .input('firstResponder', sql.NVarChar, firstResponder || null)
+      .input('faith', sql.NVarChar, faith || null)
+      .input('lawEnforcement', sql.NVarChar, lawEnforcement || null)
+      .input('age', sql.NVarChar, age || null)
+      .input('veteran', sql.NVarChar, veteran || null)
+      .input('preferredContactMethod', sql.NVarChar, preferredContactMethod || null)
+      .input('employmentStatus', sql.NVarChar, employmentStatus || null)
+      .input('comments', sql.NVarChar, comments || null)
       .input('utmSource', sql.NVarChar, utmSource || 'organic')
+      .input('utmMedium', sql.NVarChar, utm_medium || null)
+      .input('utmCampaign', sql.NVarChar, utm_campaign || null)
+      .input('utmContent', sql.NVarChar, utm_content || null)
+      .input('utmTerm', sql.NVarChar, utm_term || null)
+      .input('gclid', sql.NVarChar, gclid || null)
+      .input('fbclid', sql.NVarChar, fbclid || null)
+      .input('landingPageUrl', sql.NVarChar, landing_page_url || null)
+      .input('referrerUrl', sql.NVarChar, referrer_url || null)
       .query(`
         INSERT INTO UserInquiry
-        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, where_to_meet, comments, utm_source)
-        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @whereToMeet, @comments, @utmSource)
+        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, county, where_to_meet, first_responder, faith, law_enforcement, age, veteran, preferred_contact_method, employment_status, comments, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, fbclid, landing_page_url, referrer_url)
+        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @county, @whereToMeet, @firstResponder, @faith, @lawEnforcement, @age, @veteran, @preferredContactMethod, @employmentStatus, @comments, @utmSource, @utmMedium, @utmCampaign, @utmContent, @utmTerm, @gclid, @fbclid, @landingPageUrl, @referrerUrl)
       `);
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);

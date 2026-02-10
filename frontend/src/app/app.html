@@ -98,7 +98,7 @@
             </div>
 
             <div class="row g-2 mb-3">
-              <div class="col-md-8">
+              <div class="col-md-4">
                 <label for="city" class="form-label">City <span class="text-danger"><b>*</b></span></label>
                 <input id="city" formControlName="city" class="form-control" placeholder="City" />
                 <div *ngIf="form.get('city')?.touched && form.get('city')?.invalid" class="form-text text-danger">
@@ -106,16 +106,24 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <label for="state" class="form-label">State/Province/Region <span
+                <label for="state" class="form-label">State <span
                     class="text-danger"><b>*</b></span></label>
                 <input id="state" formControlName="state" class="form-control" placeholder="State/Province/Region" />
                 <div *ngIf="form.get('state')?.touched && form.get('state')?.invalid" class="form-text text-danger">
                   <div *ngIf="form.get('state')?.errors?.['required']">State is required.</div>
                 </div>
               </div>
+              <div class="col-md-4">
+                <label for="county" class="form-label">County <span class="text-danger"><b>*</b></span></label>
+                <input id="county" formControlName="county" class="form-control" placeholder="County" />
+                <div *ngIf="form.get('county')?.touched && form.get('county')?.invalid" class="form-text text-danger">
+                  <div *ngIf="form.get('county')?.errors?.['required']">County is required.</div>
+                </div>
+              </div>
             </div>
 
-            <div class="mb-3">
+            <!-- REMOVED TEMPORARILY -->
+            <!-- <div class="mb-3">
               <label class="form-label">If in the metropolitan area, please choose where you would like to meet:</label>
               <select class="form-select" formControlName="whereToMeet">
                 <option value="">-- Select --</option>
@@ -123,7 +131,111 @@
                 <option value="option2">Suburb A</option>
                 <option value="option3">Suburb B</option>
               </select>
+            </div> -->
+
+            <div class="mb-3">
+              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                <label class="form-label mb-0">Are you currently or retired law enforcement officer? <span class="text-danger"><b>*</b></span></label>
+                <div class="d-flex gap-2">
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="lawEnforcement" name="lawEnforcement" id="lawEnforcementYes"
+                      value="yes">
+                    <label class="form-check-label" for="lawEnforcementYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="lawEnforcement" name="lawEnforcement" id="lawEnforcementNo" value="no">
+                    <label class="form-check-label" for="lawEnforcementNo">No</label>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <div class="mb-3">
+              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                <label class="form-label mb-0">Are you currently a first responder or retired? <span class="text-danger"><b>*</b></span></label>
+                <div class="d-flex gap-2">
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="firstResponder" name="firstResponder" id="firstResponderYes"
+                      value="yes">
+                    <label class="form-check-label" for="firstResponderYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="firstResponder" name="firstResponder" id="firstResponderNo" value="no">
+                    <label class="form-check-label" for="firstResponderNo">No</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                <label class="form-label mb-0">Are you an active member of the military or a veteran? <span class="text-danger"><b>*</b></span></label>
+                <div class="d-flex gap-2">
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="veteran" name="veteran" id="veteranYes"
+                      value="yes">
+                    <label class="form-check-label" for="veteranYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="veteran" name="veteran" id="veteranNo" value="no">
+                    <label class="form-check-label" for="veteranNo">No</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                <label class="form-label mb-0">Do you have faith in a Supreme Being? <span class="text-danger"><b>*</b></span></label>
+                <div class="d-flex gap-2">
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="faith" name="faith" id="faithYes" value="yes">
+                    <label class="form-check-label" for="faithYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="faith" name="faith" id="faithNo" value="no">
+                    <label class="form-check-label" for="faithNo">No</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                <label class="form-label mb-0">Are you over the age of 18? <span class="text-danger"><b>*</b></span></label>
+                <div class="d-flex gap-2">
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="age" name="age" id="ageYes" value="yes">
+                    <label class="form-check-label" for="ageYes">Yes</label>
+                  </div>
+                  <div class="form-check form-check-inline mb-0">
+                    <input class="form-check-input" type="radio" formControlName="age" name="age" id="ageNo" value="no">
+                    <label class="form-check-label" for="ageNo">No</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="employmentStatus" class="form-label">Employment Status</label>
+                <select id="employmentStatus" class="form-select" formControlName="employmentStatus">
+                  <option value="Full Time">Full Time</option>
+                  <option value="Part Time">Part Time</option>
+                  <option value="Student">Student</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="preferredContactMethod" class="form-label">Preferred contact method</label>
+                <select id="preferredContactMethod" class="form-select" formControlName="preferredContactMethod">
+                  <option value="Phone">Phone</option>
+                  <option value="Email">Email</option>
+                  <option value="Text">Text</option>
+                </select>
+              </div>
+            </div>
+
+            
 
             <div class="mb-3">
               <label class="form-label">Other comments welcome</label>
