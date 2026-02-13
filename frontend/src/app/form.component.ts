@@ -30,6 +30,96 @@ export class FormComponent {
     landingPageUrl: string | null = null;
     referrerUrl: string | null = null;
 
+    professions: any[] = [
+    {
+      "category": "Business & Finance",
+      "options": [
+        "Accountant / CPA",
+        "Banker",
+        "Business Owner",
+        "CEO / Executive",
+        "Financial Advisor",
+        "Insurance Professional",
+        "Real Estate Professional",
+        "Sales Professional"
+      ]
+    },
+    {
+      "category": "Legal & Government",
+      "options": [
+        "Attorney / Lawyer",
+        "Government Employee",
+        "Law Enforcement Officer",
+        "Military (Active Duty)",
+        "Military (Veteran)"
+      ]
+    },
+    {
+      "category": "Healthcare",
+      "options": [
+        "Dentist",
+        "Nurse",
+        "Pharmacist",
+        "Physician / Doctor",
+        "Veterinarian",
+        "Healthcare Administrator"
+      ]
+    },
+    {
+      "category": "Education",
+      "options": [
+        "Professor / Academic",
+        "Teacher / Educator",
+        "Student"
+      ]
+    },
+    {
+      "category": "Technology & Engineering",
+      "options": [
+        "Data Analyst",
+        "Engineer",
+        "IT Professional",
+        "Project Manager",
+        "Researcher",
+        "Scientist",
+        "Technician"
+      ]
+    },
+    {
+      "category": "Skilled Trades",
+      "options": [
+        "Contractor",
+        "Electrician",
+        "Plumber",
+        "HVAC Technician",
+        "Tradesperson (Other)",
+        "Truck Driver / Transportation"
+      ]
+    },
+    {
+      "category": "Creative & Media",
+      "options": [
+        "Actor / Performer",
+        "Artist / Designer",
+        "Chef",
+        "Journalist / Writer",
+        "Marketing Professional"
+      ]
+    },
+    {
+      "category": "Other",
+      "options": [
+        "Clergy / Religious Leader",
+        "Consultant",
+        "Homemaker",
+        "Retired",
+        "Self-Employed",
+        "Unemployed",
+        "Other"
+      ]
+    }
+  ]
+
     constructor(private fb: FormBuilder, private submissionService: SubmissionService, private router: Router, private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
         // Extract utm_source from query parameters
         this.route.queryParams.subscribe(params => {
@@ -56,14 +146,20 @@ export class FormComponent {
             state: ['', [Validators.required]],
             county: ['', [Validators.required]],
             zip: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
-            firstResponder: ['', [Validators.required]],
+            lodgeCity: [''],
+            lodgeState: [''],
+            lodgeCounty: [''],
+            lodgeZip: ['', [Validators.pattern(/^[0-9]{5}$/)]],
+            // firstResponder: ['', [Validators.required]],
             faith: ['', [Validators.required]],
             whereToMeet: [''],
             preferredContactMethod: ['Phone', Validators.required],
             age: ['', [Validators.required]],
-            veteran: ['', [Validators.required]],
-            lawEnforcement: ['', [Validators.required]],
+            // veteran: ['', [Validators.required]],
+            // lawEnforcement: ['', [Validators.required]],
             employmentStatus: ['Full Time', Validators.required],
+            employmentTypeCategory: [''],
+            employmentType: [''],
             comments: [''],
         });
 
@@ -71,22 +167,35 @@ export class FormComponent {
         this.form.get('city')?.disable();
         this.form.get('state')?.disable();
         this.form.get('county')?.disable();
+        
+        this.form.get('lodgeCity')?.disable();
+        this.form.get('lodgeState')?.disable();
+        this.form.get('lodgeCounty')?.disable();
 
         // Listen for zip code changes and auto-populate city/state
         this.form.get('zip')?.valueChanges.subscribe(zip => {
             if (zip && /^[0-9]{5}$/.test(zip)) {
-                this.fetchCityAndState(zip);
-                this.fetchCounty(zip);
+                this.fetchCityAndState(zip, false);
+                this.fetchCounty(zip, false);
+            }
+        });
+        this.form.get('lodgeZip')?.valueChanges.subscribe(zip => {
+            if (zip && /^[0-9]{5}$/.test(zip)) {
+                this.fetchCityAndState(zip, true);
+                this.fetchCounty(zip, true);
             }
         });
     }
 
-    fetchCityAndState(zip: string) {
+    fetchCityAndState(zip: string, isLodge: boolean) {
         this.http.get<any>(`https://api.zippopotam.us/us/${zip}`).subscribe({
             next: (response) => {
                 if (response && response.places && response.places.length > 0) {
                     const place = response.places[0];
-                    this.form.patchValue({
+                    isLodge ? this.form.patchValue({
+                        lodgeCity: place['place name'],
+                        lodgeState: place['state']
+                    }) : this.form.patchValue({
                         city: place['place name'],
                         state: place['state']
                     });
@@ -98,7 +207,7 @@ export class FormComponent {
         });
     }
 
-    fetchCounty(zip: string) {
+    fetchCounty(zip: string, isLodge: boolean) {
         const url = "https://api.api-ninjas.com/v1/county?zipcode=" + zip;
         const headers = {
             'X-Api-Key': 'aYh25gRvcQhKCUXEazat9Z5KhSkMDhOBheKd3TjV'
@@ -106,15 +215,26 @@ export class FormComponent {
         this.http.get<any>(url, { headers }).subscribe({
             next: (response) => {
                 if (response && response.length > 0 && response[0].county_name) {
-                    this.form.patchValue({
+                    isLodge ? this.form.patchValue({
+                        lodgeCounty: response[0].county_name.replace(' County', '') // remove "County" suffix if present
+                    }) : this.form.patchValue({ 
                         county: response[0].county_name.replace(' County', '') // remove "County" suffix if present
-                    });
+                    })
                 }
             },
             error: (err) => {
                 console.log('Could not fetch county for zip code');
             }
         });
+    }
+
+    getSelectedCategoryOptions(): string[] {
+        const selectedCategory = this.form.get('employmentTypeCategory')?.value;
+        if (selectedCategory) {
+            const profession = this.professions.find(p => p.category === selectedCategory);
+            return profession ? profession.options : [];
+        }
+        return [];
     }
 
     submit() {
@@ -133,18 +253,22 @@ export class FormComponent {
                 address: {
                     city: this.form.get('city')?.value,
                     state: this.form.get('state')?.value,
-                    zip: this.form.get('zip')?.value
+                    zip: this.form.get('zip')?.value,
+                    county: this.form.get('county')?.value,
                 },
-                county: this.form.get('county')?.value,
-                whereToMeet: this.form.get('whereToMeet')?.value,
+                preferredLodgeAddress: {
+                    city: this.form.get('lodgeCity')?.value,
+                    state: this.form.get('lodgeState')?.value,
+                    zip: this.form.get('lodgeZip')?.value,
+                    county: this.form.get('lodgeCounty')?.value,
+                },
                 preferredContactMethod: this.form.get('preferredContactMethod')?.value,
                 employmentStatus: this.form.get('employmentStatus')?.value,
+                employmentTypeCategory: this.form.get('employmentTypeCategory')?.value || '',
+                employmentType: this.form.get('employmentType')?.value || '',
                 comments: this.form.get('comments')?.value || '',
                 age: this.form.get('age')?.value,
                 faith: this.form.get('faith')?.value,
-                veteran: this.form.get('veteran')?.value,
-                firstResponder: this.form.get('firstResponder')?.value,
-                lawEnforcement: this.form.get('lawEnforcement')?.value,
                 utmSource: this.utmSource,
                 utm_medium: this.utmMedium,
                 utm_campaign: this.utmCampaign,

@@ -56,17 +56,15 @@ app.post('/api/userInquiry', async (req, res) => {
       alternatePhone,
       bestTimeToContact,
       address,
-      whereToMeet,
+      preferredLodgeAddress,
       comments,
       utmSource,
-      county,
-      firstResponder,
       faith,
-      lawEnforcement,
       age,
-      veteran,
       preferredContactMethod,
       employmentStatus,
+      employmentTypeCategory,
+      employmentType,
       utm_medium,
       utm_campaign,
       utm_content,
@@ -95,15 +93,13 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('city', sql.NVarChar, address.city)
       .input('state', sql.NVarChar, address.state)
       .input('zip', sql.NVarChar, address.zip)
-      .input('county', sql.NVarChar, county || null)
-      .input('whereToMeet', sql.NVarChar, whereToMeet || null)
-      .input('firstResponder', sql.NVarChar, firstResponder || null)
+      .input('county', sql.NVarChar, address.county || null)
       .input('faith', sql.NVarChar, faith || null)
-      .input('lawEnforcement', sql.NVarChar, lawEnforcement || null)
       .input('age', sql.NVarChar, age || null)
-      .input('veteran', sql.NVarChar, veteran || null)
       .input('preferredContactMethod', sql.NVarChar, preferredContactMethod || null)
       .input('employmentStatus', sql.NVarChar, employmentStatus || null)
+      .input('employmentTypeCategory', sql.NVarChar, employmentTypeCategory || null)
+      .input('employmentType', sql.NVarChar, employmentType || null)
       .input('comments', sql.NVarChar, comments || null)
       .input('utmSource', sql.NVarChar, utmSource || 'organic')
       .input('utmMedium', sql.NVarChar, utm_medium || null)
@@ -114,10 +110,14 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('fbclid', sql.NVarChar, fbclid || null)
       .input('landingPageUrl', sql.NVarChar, landing_page_url || null)
       .input('referrerUrl', sql.NVarChar, referrer_url || null)
+      .input('lodgeCity', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.city : null)
+      .input('lodgeState', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.state : null)
+      .input('lodgeZip', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.zip : null)
+      .input('lodgeCounty', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.county : null)
       .query(`
         INSERT INTO UserInquiry
-        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, county, where_to_meet, first_responder, faith, law_enforcement, age, veteran, preferred_contact_method, employment_status, comments, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, fbclid, landing_page_url, referrer_url)
-        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip, @county, @whereToMeet, @firstResponder, @faith, @lawEnforcement, @age, @veteran, @preferredContactMethod, @employmentStatus, @comments, @utmSource, @utmMedium, @utmCampaign, @utmContent, @utmTerm, @gclid, @fbclid, @landingPageUrl, @referrerUrl)
+        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, county, faith, age, preferred_contact_method, employment_status, employment_type_category, employment_type, comments, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, fbclid, landing_page_url, referrer_url,lodge_city,lodge_state,lodge_zip_code,lodge_county)
+        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip,@county,@faith,@age,@preferredContactMethod,@employmentStatus,@employmentTypeCategory,@employmentType,@comments,@utmSource,@utmMedium,@utmCampaign,@utmContent,@utmTerm,@gclid,@fbclid,@landingPageUrl,@referrerUrl,@lodgeCity,@lodgeState,@lodgeZip,@lodgeCounty)
       `);
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);

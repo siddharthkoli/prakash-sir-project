@@ -88,9 +88,12 @@
               </div>
             </div>
 
+            <hr/>
+
+            <!-- HOME ZIP -->
             <div class="mb-3">
-              <label class="form-label">Zip / Postal Code <span class="text-danger"><b>*</b></span></label>
-              <input formControlName="zip" class="form-control" placeholder="Zip/ Postal Code" maxlength="5" />
+              <label class="form-label">Home Zip / Postal Code <span class="text-danger"><b>*</b></span></label>
+              <input formControlName="zip" class="form-control" placeholder="Zip / Postal Code" maxlength="5" />
               <div *ngIf="form.get('zip')?.touched && form.get('zip')?.invalid" class="form-text text-danger">
                 <div *ngIf="form.get('zip')?.errors?.['required']">Zip/Postal Code is required.</div>
                 <div *ngIf="form.get('zip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
@@ -121,6 +124,32 @@
                 </div>
               </div>
             </div>
+            
+            <!-- LODGE ZIP -->
+            <div class="mb-3">
+              <label class="form-label">Zip of the Lodge you'd like to join</label>
+              <input formControlName="lodgeZip" class="form-control" placeholder="Zip / Postal Code" maxlength="5" />
+              <div *ngIf="form.get('lodgeZip')?.touched && form.get('lodgeZip')?.invalid" class="form-text text-danger">
+                <div *ngIf="form.get('lodgeZip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-4">
+                <label for="lodgeCity" class="form-label">City</label>
+                <input id="lodgeCity" formControlName="lodgeCity" class="form-control" placeholder="City" />
+              </div>
+              <div class="col-md-4">
+                <label for="lodgeState" class="form-label">State</label>
+                <input id="lodgeState" formControlName="lodgeState" class="form-control" placeholder="State/Province/Region" />
+              </div>
+              <div class="col-md-4">
+                <label for="lodgeCounty" class="form-label">County</label>
+                <input id="lodgeCounty" formControlName="lodgeCounty" class="form-control" placeholder="County" />
+              </div>
+            </div>
+
+            <hr/>
 
             <!-- REMOVED TEMPORARILY -->
             <!-- <div class="mb-3">
@@ -133,7 +162,7 @@
               </select>
             </div> -->
 
-            <div class="mb-3">
+            <!-- <div class="mb-3">
               <div class="d-flex flex-column flex-md-row align-items-center gap-3">
                 <label class="form-label mb-0">Are you currently or retired law enforcement officer? <span class="text-danger"><b>*</b></span></label>
                 <div class="d-flex gap-2">
@@ -182,7 +211,7 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="mb-3">
               <div class="d-flex flex-column flex-md-row align-items-center gap-3">
@@ -235,10 +264,25 @@
               </div>
             </div>
 
-            
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="employmentTypeCategory" class="form-label">Employment Type Category</label>
+                <select id="employmentTypeCategory" class="form-select" formControlName="employmentTypeCategory">
+                  <option value="">-- Select Category --</option>
+                  <option *ngFor="let type of professions" [value]="type.category">{{ type.category }}</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="employmentType" class="form-label">Employment Type</label>
+                <select id="employmentType" class="form-select" formControlName="employmentType" [disabled]="!form.get('employmentTypeCategory')?.value">
+                  <option value="">-- Select Type --</option>
+                  <option *ngFor="let option of getSelectedCategoryOptions()" [value]="option">{{ option }}</option>
+                </select>
+              </div>
+            </div>
 
             <div class="mb-3">
-              <label class="form-label">Other comments welcome</label>
+              <label class="form-label">What motivates you to seek membership in Freemasonry?</label>
               <textarea formControlName="comments" rows="8" class="form-control"></textarea>
             </div>
 
