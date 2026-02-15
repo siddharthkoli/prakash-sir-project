@@ -280,9 +280,6 @@ export class FormComponent {
                 referrer_url: this.referrerUrl
             }
 
-            console.log(this.form);
-            console.log(body);
-
             this.submissionService.submit(body).pipe(
                 finalize(() => {
                     this.submitting = false;
