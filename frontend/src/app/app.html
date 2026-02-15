@@ -58,17 +58,16 @@
               </div>
             </div>
 
-            <div class="mb-3">
-              <label for="phone" class="form-label">Phone <span class="text-danger"><b>*</b></span></label>
-              <input id="phone" formControlName="phone" class="form-control" placeholder="(555) 555-5555"
-                maxlength="10" />
-              <div *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid" class="form-text text-danger">
-                <div *ngIf="form.get('phone')?.errors?.['required']">Phone is required.</div>
-                <div *ngIf="form.get('phone')?.errors?.['pattern']">Enter a valid phone number.</div>
-              </div>
-            </div>
-
             <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label for="phone" class="form-label">Phone <span class="text-danger"><b>*</b></span></label>
+                <input id="phone" formControlName="phone" class="form-control" placeholder="(555) 555-5555"
+                  maxlength="10" />
+                <div *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid" class="form-text text-danger">
+                  <div *ngIf="form.get('phone')?.errors?.['required']">Phone is required.</div>
+                  <div *ngIf="form.get('phone')?.errors?.['pattern']">Enter a valid phone number.</div>
+                </div>
+              </div>
               <div class="col-md-6">
                 <label for="alternatePhone" class="form-label">Alternate Phone</label>
                 <input id="alternatePhone" formControlName="alternatePhone" class="form-control"
@@ -78,8 +77,19 @@
                   <div *ngIf="form.get('alternatePhone')?.errors?.['pattern']">Enter a valid phone number.</div>
                 </div>
               </div>
+            </div>
+
+            <div class="row g-3 mb-3">
               <div class="col-md-6">
-                <label for="bestTimeToContact" class="form-label">Best Time to Contact</label>
+                <label for="preferredContactMethod" class="form-label">Preferred contact method</label>
+                <select id="preferredContactMethod" class="form-select" formControlName="preferredContactMethod">
+                  <option value="Phone">Phone</option>
+                  <option value="Email">Email</option>
+                  <option value="Text">Text</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="bestTimeToContact" class="form-label">Best Day to Contact</label>
                 <select id="bestTimeToContact" class="form-select" formControlName="bestTimeToContact">
                   <option value="weekday">Weekday</option>
                   <option value="weekend">Weekend</option>
@@ -127,7 +137,7 @@
             
             <!-- LODGE ZIP -->
             <div class="mb-3">
-              <label class="form-label">Zip of the Lodge you'd like to join</label>
+              <label class="form-label">If you know the zip of the Lodge you'd like to join</label>
               <input formControlName="lodgeZip" class="form-control" placeholder="Zip / Postal Code" maxlength="5" />
               <div *ngIf="form.get('lodgeZip')?.touched && form.get('lodgeZip')?.invalid" class="form-text text-danger">
                 <div *ngIf="form.get('lodgeZip')?.errors?.['pattern']">Enter a valid zip/postal code.</div>
@@ -213,45 +223,75 @@
               </div>
             </div> -->
 
-            <div class="mb-3">
-              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
-                <label class="form-label mb-0">Do you have faith in a Supreme Being? <span class="text-danger"><b>*</b></span></label>
-                <div class="d-flex gap-2">
-                  <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" type="radio" formControlName="faith" name="faith" id="faithYes" value="yes">
-                    <label class="form-check-label" for="faithYes">Yes</label>
+            <div class="mb-4">
+              <div class="mb-3">
+                <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                  <label class="form-label mb-0">Do you have faith in a Supreme Being? <span class="text-danger"><b>*</b></span></label>
+                  <div class="d-flex gap-2">
+                    <div class="form-check form-check-inline mb-0">
+                      <input class="form-check-input" type="radio" formControlName="faith" name="faith" id="faithYes" value="yes">
+                      <label class="form-check-label" for="faithYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline mb-0">
+                      <input class="form-check-input" type="radio" formControlName="faith" name="faith" id="faithNo" value="no">
+                      <label class="form-check-label" for="faithNo">No</label>
+                    </div>
                   </div>
-                  <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" type="radio" formControlName="faith" name="faith" id="faithNo" value="no">
-                    <label class="form-check-label" for="faithNo">No</label>
+                </div>
+              </div>
+  
+              <div class="mb-3">
+                <div class="d-flex flex-column flex-md-row align-items-center gap-3">
+                  <label class="form-label mb-0">Are you over the age of 18? <span class="text-danger"><b>*</b></span></label>
+                  <div class="d-flex gap-2">
+                    <div class="form-check form-check-inline mb-0">
+                      <input class="form-check-input" type="radio" formControlName="age" name="age" id="ageYes" value="yes">
+                      <label class="form-check-label" for="ageYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline mb-0">
+                      <input class="form-check-input" type="radio" formControlName="age" name="age" id="ageNo" value="no">
+                      <label class="form-check-label" for="ageNo">No</label>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="mb-3">
-              <div class="d-flex flex-column flex-md-row align-items-center gap-3">
-                <label class="form-label mb-0">Are you over the age of 18? <span class="text-danger"><b>*</b></span></label>
-                <div class="d-flex gap-2">
-                  <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" type="radio" formControlName="age" name="age" id="ageYes" value="yes">
-                    <label class="form-check-label" for="ageYes">Yes</label>
-                  </div>
-                  <div class="form-check form-check-inline mb-0">
-                    <input class="form-check-input" type="radio" formControlName="age" name="age" id="ageNo" value="no">
-                    <label class="form-check-label" for="ageNo">No</label>
-                  </div>
-                </div>
+            <div class="row g-2 mb-3">
+              <div class="col-md-4">
+                <label for="employmentStatus" class="form-label">Employment Status</label>
+                <select id="employmentStatus" class="form-select" formControlName="employmentStatus">
+                  <option value="Full Time">Full Time</option>
+                  <option value="Part Time">Part Time</option>
+                  <option value="Student">Student</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="employmentTypeCategory" class="form-label">Employment Type Category</label>
+                <select id="employmentTypeCategory" class="form-select" formControlName="employmentTypeCategory">
+                  <option value="">-- Select Category --</option>
+                  <option *ngFor="let type of professions" [value]="type.category">{{ type.category }}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="employmentType" class="form-label">Employment Type</label>
+                <select id="employmentType" class="form-select" formControlName="employmentType" [disabled]="!form.get('employmentTypeCategory')?.value">
+                  <option value="">-- Select Type --</option>
+                  <option *ngFor="let option of getSelectedCategoryOptions()" [value]="option">{{ option }}</option>
+                </select>
               </div>
             </div>
 
-            <div class="row g-3 mb-3">
+
+            <!-- <div class="row g-3 mb-3">
               <div class="col-md-6">
                 <label for="employmentStatus" class="form-label">Employment Status</label>
                 <select id="employmentStatus" class="form-select" formControlName="employmentStatus">
                   <option value="Full Time">Full Time</option>
                   <option value="Part Time">Part Time</option>
                   <option value="Student">Student</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div class="col-md-6">
@@ -279,10 +319,10 @@
                   <option *ngFor="let option of getSelectedCategoryOptions()" [value]="option">{{ option }}</option>
                 </select>
               </div>
-            </div>
+            </div> -->
 
             <div class="mb-3">
-              <label class="form-label">What motivates you to seek membership in Freemasonry?</label>
+              <label class="form-label">What motivates you to seek membership in Freemasonry? <span class="text-danger"><b>*</b></span></label>
               <textarea formControlName="comments" rows="8" class="form-control"></textarea>
             </div>
 

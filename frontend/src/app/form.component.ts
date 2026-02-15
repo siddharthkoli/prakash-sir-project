@@ -160,7 +160,7 @@ export class FormComponent {
             employmentStatus: ['Full Time', Validators.required],
             employmentTypeCategory: [''],
             employmentType: [''],
-            comments: [''],
+            comments: ['', Validators.required],
         });
 
         // disable city and state so they can only be populated from the zip lookup
