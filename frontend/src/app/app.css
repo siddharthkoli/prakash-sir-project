@@ -1,3 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Font variables mapped from your Tailwind config */
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+}
+
+/* Set the default app font to the sans family */
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility classes you can use in templates/components */
+.font-sans { font-family: var(--font-sans); }
+.font-display { font-family: var(--font-display); }
+.lead-display { font-family: var(--font-display); font-weight: 500; }
+
 /* Center the page content both vertically and horizontally */
 .center-wrapper {
 	min-height: 100vh; /* full viewport height */
@@ -47,4 +67,44 @@
   .footer-padding {
     padding-left: 150px; /* desktop */
   }
+}
+
+.hero {
+  background: #152549;
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 20px;
+  max-width: 700px;
+  margin: 0 auto 30px auto;
+}
+
+.btn-primary {
+  background: #C6A75E;
+  color: var(--navy);
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+.micro {
+  margin-top: 12px;
+  font-size: 14px;
+  opacity: 0.8;
 }
