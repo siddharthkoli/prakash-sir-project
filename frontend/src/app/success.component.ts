@@ -72,56 +72,6 @@ import { Component } from '@angular/core';
           </div>
         </div>
       </div>
-
-      <footer class="site-footer" style="background-color: #152549;">
-        <div class="footer-padding">
-          <div class="container-fluid pb-4">
-            <div class="row">
-
-              <div class="col-12 col-md-4 pb-4">
-                <img src="/assets/NYM_logo-combo-gray.png" alt="NYM" style="height:110px; width:auto;">
-              </div>
-
-              <div class="col-12 col-md-4">
-                <div class="d-flex">
-                  <div class="d-inline-block" style="border:3px solid #AB876D; padding:5px 18px; color:#fff; margin-bottom:18px;">CONTACT</div>
-                </div>
-                <div style="font-weight:300; color:#fff; font-size:large;">Grand Lodge of the State of New York</div>
-                <div style="font-weight:300; color:#fff; font-size:large;">71 West 23rd Street</div>
-                <div style="font-weight:300; color:#fff; font-size:large;">New York, NY 10010</div>
-                <div style="font-weight:300; color:#fff; font-size:large; margin-top:15px;">800.362.7664</div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <div class="d-flex flex-row align-items-center">
-                  <div class="p-2">
-                    <a href="https://www.facebook.com/NYMasons/" target="_blank">
-                      <img height="30" width="30" src="https://img.icons8.com/material-sharp/48/9E765A/facebook-f.png" alt="facebook">
-                    </a>
-                  </div>
-                  <div class="p-2">
-                    <a href="https://www.instagram.com/nymasons/" target="_blank">
-                      <img height="40" width="40" src="https://img.icons8.com/sf-regular/48/9E765A/instagram-new.png" alt="instagram">
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          <div class="d-flex flex-row">
-            <div style="color:#e5e3e3; padding:20px 0; font-size:13px;">©2025 New York Masons. All Rights Reserved.</div>
-            <div class="ms-auto d-flex flex-row me-md-5 me-2">
-              <a href="https://nymasons.org/privacy-policy/" target="_blank"
-                 style="color:#AB876D; padding:20px 15px; font-size:13px; text-decoration:underline; font-weight:lighter;">PRIVACY POLICY</a>
-              <a href="https://nymasons.org/terms-conditions/" target="_blank"
-                 style="color:#AB876D; padding:20px 15px; font-size:13px; text-decoration:underline; font-weight:lighter;">TERMS & CONDITIONS</a>
-            </div>
-          </div>
-
-        </div>
-      </footer>
     </div>
   `,
   styles: [
