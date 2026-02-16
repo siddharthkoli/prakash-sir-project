@@ -4,4 +4,4 @@ const emailClient = new EmailClient(
   process.env.ACS_CONNECTION_STRING
 );
 
-export default emailClient;
+export default emailClient; 
