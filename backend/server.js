@@ -2,6 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+
+const emailClient = require('./emailClient')
+const mjml2html = require("mjml");
+const mjmlTemplateString = fs.readFileSync(path.join(__dirname, 'emailTemplate.mjml'), 'utf-8');
+const { html } = mjml2html(mjmlTemplateString);
 
 
 // Load environment variables when not preloaded by node -r
@@ -42,6 +48,24 @@ try {
     .catch(err => console.error("SQL connection error:", err));
 } catch (err) {
   console.error("Error setting up SQL connection:", err);
+}
+
+async function sendEmail({ to, subject, html }) {
+  const message = {
+    senderAddress: "DoNotReply@c2b3abed-e60e-4943-b3b7-e48ffd91753b.azurecomm.net",
+    content: {
+      subject,
+      html
+    },
+    recipients: {
+      to: [{ address: to }]
+    }
+  };
+
+  const poller = await emailClient.default.beginSend(message);
+  const result = await poller.pollUntilDone();
+
+  return result;
 }
 
 
@@ -122,6 +146,12 @@ app.post('/api/userInquiry', async (req, res) => {
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
 
+    sendEmail({
+      to: email,
+      subject: "NY Masons - Inquiry Received",
+      html: html
+    });
+
     return res.status(201).json({ message: 'UserInquiry created' });
   } catch (err) {
     console.error(err);
@@ -132,16 +162,34 @@ app.post('/api/userInquiry', async (req, res) => {
   }
 });
 
+app.get('/api/testEmail', async (req, res) => {
+  const to = req.query.to;
+  if (!to)
+    res.status(400).json({ message: 'Missing "to" query parameter' });
+
+  try {
+    // const result = await sendEmail({
+    //   to,
+    //   subject: "NY Masons - Inquiry Received",
+    //   html
+    // });
+    res.send(html);
+  } catch (err) {
+    console.error('Error sending email:', err);
+    res.status(500).json({ message: 'Error sending email', error: err.message });
+  }
+});
+
 // Health check endpoint for Azure
 app.get('/health', async (req, res) => {
-  return res.status(200).json({ 
+  return res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
   });
   // try {
   //   const pool = await sql.connect(sqlConfig);
   //   const result = await pool.request().query('SELECT 1 as [value]');
-    
+
   //   if (result.recordset && result.recordset.length > 0) {
   //     return res.status(200).json({ 
   //       status: 'healthy',

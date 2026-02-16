@@ -1,0 +1,160 @@
+<mjml>
+  <mj-head>
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" />
+      <mj-text font-size="16px" color="#333333" />
+    </mj-attributes>
+  </mj-head>
+
+  <mj-body background-color="#e5e5e5">
+
+    <!-- Header -->
+    <mj-section background-color="#162a4d" padding="30px 0">
+        <mj-image width: "auto" src="https://nymasons.org/wp-content/uploads/2023/07/NYM-wordmark-light@3x.png" />
+    </mj-section>
+
+    <!-- Spacer -->
+    <mj-section padding="20px 0">
+      <mj-column></mj-column>
+    </mj-section>
+
+    <!-- White Card -->
+    <mj-section padding="0 20px">
+      <mj-column
+        background-color="#ffffff"
+        padding="40px 30px"
+        border-radius="8px"
+      >
+
+        <!-- Success Title -->
+        <mj-text
+          align="center"
+          font-size="28px"
+          color="#1f7a4d"
+          font-weight="bold"
+          padding-bottom="10px"
+        >
+          Received!
+        </mj-text>
+
+        <mj-text align="center" color="#666666" padding-bottom="30px">
+          Thank you — your submission has been received.
+        </mj-text>
+
+        <!-- What happens next -->
+        <mj-text font-size="20px" font-weight="bold" padding-bottom="20px">
+          What happens next
+        </mj-text>
+
+        <!-- Bullet 1 -->
+        <mj-table>
+          <tr>
+            <td width="30" valign="top">
+              <div style="
+                width:20px;
+                height:20px;
+                background:#1f7a4d;
+                border-radius:50%;
+                text-align:center;
+                color:white;
+                font-size:14px;
+                line-height:20px;
+              ">
+                ✓
+              </div>
+            </td>
+            <td style="padding-left:10px;">
+              <strong>Reviewed by our membership team:</strong><br/>
+              Your inquiry is reviewed by our membership team.
+            </td>
+          </tr>
+        </mj-table>
+
+        <mj-spacer height="20px" />
+
+        <!-- Bullet 2 -->
+        <mj-table>
+          <tr>
+            <td width="30" valign="top">
+              <div style="
+                width:20px;
+                height:20px;
+                background:#1f7a4d;
+                border-radius:50%;
+                text-align:center;
+                color:white;
+                font-size:14px;
+                line-height:20px;
+              ">
+                ✓
+              </div>
+            </td>
+            <td style="padding-left:10px;">
+              <strong>Forwarded locally:</strong><br/>
+              It is forwarded to a local lodge near you for follow-up.
+            </td>
+          </tr>
+        </mj-table>
+
+        <mj-spacer height="20px" />
+
+        <!-- Bullet 3 -->
+        <mj-table>
+          <tr>
+            <td width="30" valign="top">
+              <div style="
+                width:20px;
+                height:20px;
+                background:#1f7a4d;
+                border-radius:50%;
+                text-align:center;
+                color:white;
+                font-size:14px;
+                line-height:20px;
+              ">
+                ✓
+              </div>
+            </td>
+            <td style="padding-left:10px;">
+              <strong>A member will contact you:</strong><br/>
+              A member from the local lodge will reach out directly.
+            </td>
+          </tr>
+        </mj-table>
+
+        <mj-spacer height="20px" />
+
+        <!-- Bullet 4 -->
+        <mj-table>
+          <tr>
+            <td width="30" valign="top">
+              <div style="
+                width:20px;
+                height:20px;
+                background:#1f7a4d;
+                border-radius:50%;
+                text-align:center;
+                color:white;
+                font-size:14px;
+                line-height:20px;
+              ">
+                ✓
+              </div>
+            </td>
+            <td style="padding-left:10px;">
+              <strong>Meet and learn:</strong><br/>
+              You'll have the opportunity to meet, ask questions, and learn more. 
+              There is no obligation — only an open invitation to explore.
+            </td>
+          </tr>
+        </mj-table>
+
+      </mj-column>
+    </mj-section>
+
+    <mj-section padding="30px 0">
+      <mj-column></mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>
