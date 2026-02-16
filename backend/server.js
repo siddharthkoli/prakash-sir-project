@@ -168,12 +168,12 @@ app.get('/api/testEmail', async (req, res) => {
     res.status(400).json({ message: 'Missing "to" query parameter' });
 
   try {
-    // const result = await sendEmail({
-    //   to,
-    //   subject: "NY Masons - Inquiry Received",
-    //   html
-    // });
-    res.send(html);
+    const result = await sendEmail({
+      to,
+      subject: "NY Masons - Inquiry Received",
+      html
+    });
+    res.json({ message: 'Email sent', result });
   } catch (err) {
     console.error('Error sending email:', err);
     res.status(500).json({ message: 'Error sending email', error: err.message });
