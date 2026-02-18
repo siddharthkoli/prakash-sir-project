@@ -4,10 +4,10 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
-// const emailClient = require('./emailClient')
-// const mjml2html = require("mjml");
-// const mjmlTemplateString = fs.readFileSync(path.join(__dirname, 'emailTemplate.mjml'), 'utf-8');
-// const { html } = mjml2html(mjmlTemplateString);
+const emailClient = require('./emailClient')
+const mjml2html = require("mjml");
+const mjmlTemplateString = fs.readFileSync(path.join(__dirname, 'emailTemplate.mjml'), 'utf-8');
+const { html } = mjml2html(mjmlTemplateString);
 
 
 // Load environment variables when not preloaded by node -r
