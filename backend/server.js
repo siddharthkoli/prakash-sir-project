@@ -4,10 +4,27 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
-const emailClient = require('./emailClient')
-const mjml2html = require("mjml");
-const mjmlTemplateString = fs.readFileSync(path.join(__dirname, 'emailTemplate.mjml'), 'utf-8');
-const { html } = mjml2html(mjmlTemplateString);
+// Conditional email setup based on environment variable
+let emailClient = null;
+let emailHtml = null;
+const emailNotificationsEnabled = process.env.ENABLE_EMAIL_NOTIFICATIONS === 'true';
+
+if (emailNotificationsEnabled) {
+  try {
+    emailClient = require('./emailClient');
+    const mjml2html = require("mjml");
+    const mjmlTemplateString = fs.readFileSync(path.join(__dirname, 'emailTemplate.mjml'), 'utf-8');
+    const { html } = mjml2html(mjmlTemplateString);
+    emailHtml = html;
+    console.log('✓ Email notifications enabled');
+  } catch (err) {
+    console.error('✗ Failed to initialize email notifications:', err.message);
+    emailClient = null;
+    emailHtml = null;
+  }
+} else {
+  console.log('ℹ Email notifications disabled (set ENABLE_EMAIL_NOTIFICATIONS=true to enable)');
+}
 
 
 // Load environment variables when not preloaded by node -r
@@ -69,21 +86,31 @@ try {
 }
 
 async function sendEmail({ to, subject, html }) {
-  const message = {
-    senderAddress: "DoNotReply@c2b3abed-e60e-4943-b3b7-e48ffd91753b.azurecomm.net",
-    content: {
-      subject,
-      html
-    },
-    recipients: {
-      to: [{ address: to }]
-    }
-  };
+  if (!emailNotificationsEnabled || !emailClient) {
+    console.log(`ℹ Email would be sent to ${to} (notifications currently disabled)`);
+    return { status: 'skipped', reason: 'Email notifications disabled' };
+  }
 
-  const poller = await emailClient.default.beginSend(message);
-  const result = await poller.pollUntilDone();
+  try {
+    const message = {
+      senderAddress: "DoNotReply@c2b3abed-e60e-4943-b3b7-e48ffd91753b.azurecomm.net",
+      content: {
+        subject,
+        html
+      },
+      recipients: {
+        to: [{ address: to }]
+      }
+    };
 
-  return result;
+    const poller = await emailClient.beginSend(message);
+    const result = await poller.pollUntilDone();
+
+    return result;
+  } catch (err) {
+    console.error('Error sending email:', err);
+    throw err;
+  }
 }
 
 
@@ -165,11 +192,14 @@ app.post('/api/userInquiry', async (req, res) => {
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
     lastQueryTime = Date.now(); // Reset keep-alive timer on successful user activity
 
-    // sendEmail({
-    //   to: email,
-    //   subject: "NY Masons - Inquiry Received",
-    //   html: html
-    // });
+    // Send email notification if enabled
+    if (emailNotificationsEnabled) {
+      sendEmail({
+        to: email,
+        subject: "NY Masons - Inquiry Received",
+        html: emailHtml
+      }).catch(err => console.error('Failed to send email:', err.message));
+    }
 
     return res.status(201).json({ message: 'UserInquiry created' });
   } catch (err) {
@@ -184,13 +214,17 @@ app.post('/api/userInquiry', async (req, res) => {
 app.get('/api/testEmail', async (req, res) => {
   const to = req.query.to;
   if (!to)
-    res.status(400).json({ message: 'Missing "to" query parameter' });
+    return res.status(400).json({ message: 'Missing "to" query parameter' });
+
+  if (!emailNotificationsEnabled) {
+    return res.status(400).json({ message: 'Email notifications are disabled. Set ENABLE_EMAIL_NOTIFICATIONS=true to enable.' });
+  }
 
   try {
     const result = await sendEmail({
       to,
       subject: "NY Masons - Inquiry Received",
-      html
+      html: emailHtml
     });
     res.json({ message: 'Email sent', result });
   } catch (err) {
