@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   template: `
     <div>
-      <div style="background-color: #152549; padding: 20px 0;">
+      <!-- <div style="background-color: #152549; padding: 20px 0;">
         <div class="container-fluid px-3 px-md-5">
           <div class="row align-items-center">
             <div class="col-lg-8 offset-lg-2">
@@ -19,7 +19,7 @@ import { Component } from '@angular/core';
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="min-vh-100" style="background-color: rgba(248,249,250,0.85);">
         <div class="container py-5">
