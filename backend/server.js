@@ -42,6 +42,24 @@ console.log("SQL Config:", {
   database: sqlConfig.database
 });
 
+// Lazy health check: only ping DB if approaching sleep threshold (50 min of inactivity)
+const IDLE_THRESHOLD_MS = 50 * 60 * 1000; // 50 minutes
+let lastQueryTime = Date.now();
+
+async function ensureDbConnection() {
+  try {
+    const now = Date.now();
+    if (now - lastQueryTime > IDLE_THRESHOLD_MS) {
+      const pool = await sql.connect(sqlConfig);
+      await pool.request().query('SELECT 1 as [value]');
+      lastQueryTime = now;
+      console.log('Database kept alive');
+    }
+  } catch (err) {
+    console.error('Error keeping DB alive:', err);
+  }
+}
+
 try {
   sql.connect(sqlConfig)
     .then(() => console.log("Connected to Azure SQL"))
@@ -145,6 +163,7 @@ app.post('/api/userInquiry', async (req, res) => {
       `);
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
+    lastQueryTime = Date.now(); // Reset keep-alive timer on successful user activity
 
     // sendEmail({
     //   to: email,
@@ -181,31 +200,27 @@ app.get('/api/testEmail', async (req, res) => {
 });
 
 // Health check endpoint for Azure
+// Keeps DB alive by pinging only if 50+ mins have passed since last activity
 app.get('/health', async (req, res) => {
+  const now = Date.now();
+  
+  // Only ping DB if approaching the 60-min sleep threshold
+  if (now - lastQueryTime > IDLE_THRESHOLD_MS) {
+    try {
+      const pool = await sql.connect(sqlConfig);
+      await pool.request().query('SELECT 1 as [value]');
+      lastQueryTime = now;
+      console.log('Database kept alive via health check');
+    } catch (err) {
+      console.error('Error keeping DB alive:', err);
+      // Don't fail health check — keep app service happy
+    }
+  }
+  
   return res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
   });
-  // try {
-  //   const pool = await sql.connect(sqlConfig);
-  //   const result = await pool.request().query('SELECT 1 as [value]');
-
-  //   if (result.recordset && result.recordset.length > 0) {
-  //     return res.status(200).json({ 
-  //       status: 'healthy',
-  //       timestamp: new Date().toISOString(),
-  //       database: 'connected'
-  //     });
-  //   }
-  // } catch (err) {
-  //   console.error('Health check error:', err);
-  //   return res.status(503).json({ 
-  //     status: 'unhealthy',
-  //     timestamp: new Date().toISOString(),
-  //     database: 'disconnected',
-  //     error: err.message
-  //   });
-  // }
 });
 
 const PORT = process.env.PORT || 3000;
