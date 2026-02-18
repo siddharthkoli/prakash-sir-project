@@ -177,12 +177,26 @@ export class FormComponent {
             if (zip && /^[0-9]{5}$/.test(zip)) {
                 this.fetchCityAndState(zip, false);
                 this.fetchCounty(zip, false);
+            } else if (!zip) {
+                // Clear city, state, county when zip is cleared
+                this.form.patchValue({
+                    city: '',
+                    state: '',
+                    county: ''
+                });
             }
         });
         this.form.get('lodgeZip')?.valueChanges.subscribe(zip => {
             if (zip && /^[0-9]{5}$/.test(zip)) {
                 this.fetchCityAndState(zip, true);
                 this.fetchCounty(zip, true);
+            } else if (!zip) {
+                // Clear lodge city, state, county when lodgeZip is cleared
+                this.form.patchValue({
+                    lodgeCity: '',
+                    lodgeState: '',
+                    lodgeCounty: ''
+                });
             }
         });
     }
