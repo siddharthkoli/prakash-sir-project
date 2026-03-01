@@ -152,6 +152,42 @@ app.post('/api/userInquiry', async (req, res) => {
 
     const pool = await sql.connect(sqlConfig);
 
+    // figure out which county we should use when doing a regional lookup
+    const effectiveCounty = (preferredLodgeAddress && preferredLodgeAddress.county)
+      ? preferredLodgeAddress.county
+      : address.county;
+
+    let region = null;
+    let district = null;
+    let autoLodgeId = null;
+
+    if (effectiveCounty) {
+      try {
+        const mapping = await pool.request()
+          .input('county', sql.NVarChar, effectiveCounty)
+          .query(
+`          SELECT d.district_name,
+                 r.region_name,
+                 (SELECT TOP 1 id
+                  FROM Lodges
+                  WHERE district_id = c.district_id
+                  ORDER BY id) AS lodge_id
+           FROM county c
+           LEFT JOIN Districts d ON d.id = c.district_id
+           LEFT JOIN Regions r ON r.id = d.region_id
+           WHERE c.county_name = @county`);
+
+        if (mapping.recordset.length) {
+          district = mapping.recordset[0].district_name;
+          region = mapping.recordset[0].region_name;
+          autoLodgeId = mapping.recordset[0].lodge_id;
+        }
+      } catch (err) {
+        // lookup tables might not exist in this database; ignore and proceed
+        console.warn('Could not resolve region/district for county', effectiveCounty, err.message);
+      }
+    }
+
     const result = await pool.request()
       .input('firstName', sql.NVarChar, firstName)
       .input('lastName', sql.NVarChar, lastName)
@@ -183,10 +219,13 @@ app.post('/api/userInquiry', async (req, res) => {
       .input('lodgeState', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.state : null)
       .input('lodgeZip', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.zip : null)
       .input('lodgeCounty', sql.NVarChar, preferredLodgeAddress ? preferredLodgeAddress.county : null)
+      .input('region', sql.NVarChar, region || null)
+      .input('district', sql.NVarChar, district || null)
+      .input('allocatedLodgeId', sql.Int, autoLodgeId || null)
       .query(`
         INSERT INTO UserInquiry
-        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, county, faith, age, preferred_contact_method, employment_status, employment_type_category, employment_type, comments, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, fbclid, landing_page_url, referrer_url,lodge_city,lodge_state,lodge_zip_code,lodge_county)
-        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip,@county,@faith,@age,@preferredContactMethod,@employmentStatus,@employmentTypeCategory,@employmentType,@comments,@utmSource,@utmMedium,@utmCampaign,@utmContent,@utmTerm,@gclid,@fbclid,@landingPageUrl,@referrerUrl,@lodgeCity,@lodgeState,@lodgeZip,@lodgeCounty)
+        (first_name, last_name, email, phone, alternate_phone, best_time_to_contact, city, state, zip_code, county, faith, age, preferred_contact_method, employment_status, employment_type_category, employment_type, comments, utm_source, utm_medium, utm_campaign, utm_content, utm_term, gclid, fbclid, landing_page_url, referrer_url, lodge_city, lodge_state, lodge_zip_code, lodge_county, region, district, allocated_lodge_id)
+        VALUES (@firstName, @lastName, @email, @phone, @alternatePhone, @bestTimeToContact, @city, @state, @zip,@county,@faith,@age,@preferredContactMethod,@employmentStatus,@employmentTypeCategory,@employmentType,@comments,@utmSource,@utmMedium,@utmCampaign,@utmContent,@utmTerm,@gclid,@fbclid,@landingPageUrl,@referrerUrl,@lodgeCity,@lodgeState,@lodgeZip,@lodgeCounty,@region,@district,@allocatedLodgeId)
       `);
 
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
