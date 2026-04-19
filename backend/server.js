@@ -180,7 +180,7 @@ app.post('/api/userInquiry', async (req, res) => {
         if (mapping.recordset.length) {
           district = mapping.recordset[0].district_name;
           region = mapping.recordset[0].region_name;
-          autoLodgeId = mapping.recordset[0].lodge_id;
+          // autoLodgeId = mapping.recordset[0].lodge_id;
         }
       } catch (err) {
         // lookup tables might not exist in this database; ignore and proceed
