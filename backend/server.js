@@ -113,6 +113,134 @@ async function sendEmail({ to, subject, html }) {
   }
 }
 
+// Render template with variable substitution ({{variableName}})
+function renderTemplate(str, data) {
+  if (!str) return "";
+  return String(str).replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, key) => {
+    const v = data[key];
+    return v === undefined || v === null ? "" : String(v);
+  });
+}
+
+// Get email template from database for a trigger key
+async function getTemplateForTrigger(pool, triggerKey) {
+  try {
+    const result = await pool.request()
+      .input('triggerKey', sql.NVarChar, triggerKey)
+      .query(`
+        SELECT t.id, t.name, t.subject, t.html_body
+        FROM EmailTriggers tr
+        LEFT JOIN EmailTemplates t ON tr.template_id = t.id
+        WHERE tr.trigger_key = @triggerKey
+      `);
+    return result.recordset[0] || null;
+  } catch (err) {
+    console.warn('Could not fetch email template for trigger:', triggerKey, err.message);
+    return null;
+  }
+}
+
+// Get district and region chairmen for an inquiry
+async function getChairmenForInquiry(pool, district, region) {
+  const chairmen = [];
+  const seenEmails = new Set();
+
+  try {
+    // Get district chairmen (multiple chairmen per district via junction table)
+    if (district) {
+      const districtResult = await pool.request()
+        .input('districtName', sql.NVarChar, district)
+        .query(`
+          SELECT DISTINCT u.email, 
+                 TRIM(CONCAT(u.first_name, ' ', u.last_name)) AS name
+          FROM DistrictChairmen dc
+          JOIN Districts d ON dc.district_id = d.id
+          JOIN Users u ON dc.user_id = u.id
+          WHERE d.district_name = @districtName AND u.email IS NOT NULL
+        `);
+      
+      for (const row of districtResult.recordset) {
+        if (!seenEmails.has(row.email)) {
+          seenEmails.add(row.email);
+          chairmen.push(row);
+        }
+      }
+    }
+
+    // Get region chairmen (multiple chairmen per region via junction table)
+    if (region) {
+      const regionResult = await pool.request()
+        .input('regionName', sql.NVarChar, region)
+        .query(`
+          SELECT DISTINCT u.email, 
+                 TRIM(CONCAT(u.first_name, ' ', u.last_name)) AS name
+          FROM RegionChairmen rc
+          JOIN Regions r ON rc.region_id = r.id
+          JOIN Users u ON rc.user_id = u.id
+          WHERE r.region_name = @regionName AND u.email IS NOT NULL
+        `);
+      
+      for (const row of regionResult.recordset) {
+        if (!seenEmails.has(row.email)) {
+          seenEmails.add(row.email);
+          chairmen.push(row);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Error fetching chairmen for inquiry:', err.message);
+  }
+
+  return chairmen;
+}
+
+// Send emails to chairmen for new inquiry
+async function sendChairmenNotifications(pool, inquiryData) {
+  try {
+    // Get the template for new_inquiry trigger
+    const template = await getTemplateForTrigger(pool, 'new_inquiry');
+    if (!template || !template.id) {
+      console.log('ℹ No template assigned for new_inquiry trigger — skipping chairman notifications');
+      return { sent: 0, skipped: true };
+    }
+
+    // Get chairmen for this inquiry's district and region
+    const chairmen = await getChairmenForInquiry(pool, inquiryData.districtName, inquiryData.regionName);
+    if (chairmen.length === 0) {
+      console.log('ℹ No chairmen found for inquiry — skipping notifications');
+      return { sent: 0, skipped: true };
+    }
+
+    let sent = 0;
+    for (const chairman of chairmen) {
+      try {
+        const data = {
+          ...inquiryData,
+          recipientName: chairman.name || ""
+        };
+        
+        const subject = renderTemplate(template.subject, data);
+        const html = renderTemplate(template.html_body, data);
+        
+        await sendEmail({ 
+          to: chairman.email, 
+          subject, 
+          html 
+        });
+        sent++;
+        console.log(`✓ Chairman notification sent to ${chairman.email}`);
+      } catch (err) {
+        console.error(`✗ Failed to send chairman notification to ${chairman.email}:`, err.message);
+      }
+    }
+    
+    return { sent, skipped: false };
+  } catch (err) {
+    console.error('Error in sendChairmenNotifications:', err.message);
+    return { sent: 0, skipped: true, error: err.message };
+  }
+}
+
 
 // API endpoint
 app.post('/api/userInquiry', async (req, res) => {
@@ -231,13 +359,37 @@ app.post('/api/userInquiry', async (req, res) => {
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
     lastQueryTime = Date.now(); // Reset keep-alive timer on successful user activity
 
-    // Send email notification if enabled
+    // Send email notification to the inquiry submitter if enabled
     if (emailNotificationsEnabled) {
       sendEmail({
         to: email,
         subject: "NY Masons - Inquiry Received",
         html: emailHtml
       }).catch(err => console.error('Failed to send email:', err.message));
+    }
+
+    // Send notifications to district and region chairmen
+    const inquiryData = {
+      candidateName: `${firstName} ${lastName}`,
+      candidateFirstName: firstName,
+      candidateLastName: lastName,
+      candidateEmail: email,
+      candidatePhone: phone,
+      candidateCity: address.city,
+      candidateState: address.state,
+      candidateZip: address.zip,
+      candidateCounty: address.county,
+      regionName: region,
+      districtName: district,
+      inquiryDate: new Date().toISOString(),
+      portalUrl: process.env.PORTAL_URL || 'https://nymasons.org'
+    };
+    
+    try {
+      await sendChairmenNotifications(pool, inquiryData);
+    } catch (err) {
+      console.error('Error sending chairman notifications:', err.message);
+      // Don't fail the inquiry creation — just log the error
     }
 
     return res.status(201).json({ message: 'UserInquiry created' });
