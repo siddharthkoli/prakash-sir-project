@@ -304,7 +304,11 @@ export class FormComponent {
                     this.form.reset();
                     // restore defaults after reset
                     try { this.form.get('preferredContactMethod')?.setValue('either'); } catch (_) { /* noop */ }
-                    window.top.location.href = 'https://newyorkmasons.org/inquiry-confirmation/';
+                    if (window.top) {
+                        window.top.location.href = 'https://newyorkmasons.org/inquiry-confirmation/';
+                    } else {
+                        window.location.href = 'https://newyorkmasons.org/inquiry-confirmation/';
+                    }
                 },
                 error: (err: any) => {
                     if (err instanceof TimeoutError) {
