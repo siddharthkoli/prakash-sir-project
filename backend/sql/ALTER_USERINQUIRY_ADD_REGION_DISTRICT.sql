@@ -36,15 +36,7 @@ BEGIN TRY
     UPDATE ui
     SET
         district = d.district_name,
-        region   = r.region_name,
-        allocated_lodge_id = COALESCE(ui.allocated_lodge_id,
-            (
-                SELECT TOP 1 id
-                FROM Lodges
-                WHERE district_id = c.district_id
-                ORDER BY id
-            )
-        )
+        region   = r.region_name
     FROM UserInquiry ui
     LEFT JOIN county c ON c.county_name = COALESCE(NULLIF(ui.lodge_county,'') , ui.county)
     LEFT JOIN Districts d ON d.id = c.district_id
@@ -70,15 +62,7 @@ BEGIN
         UPDATE ui
         SET
             district = d.district_name,
-            region = r.region_name,
-            allocated_lodge_id = COALESCE(ui.allocated_lodge_id,
-                (
-                    SELECT TOP 1 id
-                    FROM Lodges
-                    WHERE district_id = c.district_id
-                    ORDER BY id
-                )
-            )
+            region = r.region_name
         FROM UserInquiry ui
         INNER JOIN inserted i ON ui.id = i.id
         LEFT JOIN county c ON c.county_name = COALESCE(NULLIF(i.lodge_county, ''''), i.county)
