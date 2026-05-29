@@ -316,6 +316,14 @@ app.post('/api/userInquiry', async (req, res) => {
       }
     }
 
+    // Assign default region/district if still not set
+    if (!region) {
+      region = 'METROPOLITAN REGION';
+    }
+    if (!district) {
+      district = 'FIRST MANHATTAN';
+    }
+
     const result = await pool.request()
       .input('firstName', sql.NVarChar, firstName)
       .input('lastName', sql.NVarChar, lastName)
