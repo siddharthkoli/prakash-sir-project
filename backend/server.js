@@ -400,6 +400,15 @@ app.post('/api/userInquiry', async (req, res) => {
       // Don't fail the inquiry creation — just log the error
     }
 
+    // call endpoint from lodge portal to invalidate inquiries cache after new inquiry is created
+    try {
+      fetch(`${process.env.LODGE_PORTAL_URL}/api/cache/invalidate?namespaces=inquiries`, {
+        method: 'POST'
+      });
+    } catch (err) {
+      console.error('Error invalidating inquiries cache:', err.message);
+    }
+
     return res.status(201).json({ message: 'UserInquiry created' });
   } catch (err) {
     console.error(err);
