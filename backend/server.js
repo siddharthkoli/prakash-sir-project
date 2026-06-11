@@ -381,21 +381,11 @@ app.post('/api/userInquiry', async (req, res) => {
     console.log('UserInquiry inserted. Rows affected:', result.rowsAffected[0]);
     lastQueryTime = Date.now(); // Reset keep-alive timer on successful user activity
 
-    // Send email notification to the inquiry submitter if enabled
-    if (emailNotificationsEnabled) {
-      sendEmail({
-        to: email,
-        subject: "NY Masons - Inquiry Received",
-        html: emailHtml
-      }).catch(err => console.error('Failed to send email:', err.message));
-    }
-
-    // Send notifications to district and region chairmen
     const inquiryData = {
       candidateName: `${firstName} ${lastName}`,
       candidateFirstName: firstName,
       candidateLastName: lastName,
-      candidateEmail: email,
+      candidateEmail: normalizedEmail,
       candidatePhone: phone,
       candidateCity: address.city,
       candidateState: address.state,
@@ -406,22 +396,27 @@ app.post('/api/userInquiry', async (req, res) => {
       inquiryDate: new Date().toISOString(),
       portalUrl: process.env.PORTAL_URL || 'https://nymasons.org'
     };
-    
-    try {
-      await sendChairmenNotifications(pool, inquiryData);
-    } catch (err) {
-      console.error('Error sending chairman notifications:', err.message);
-      // Don't fail the inquiry creation — just log the error
+
+    // Send email notification to the inquiry submitter if enabled
+    if (emailNotificationsEnabled) {
+      void sendEmail({
+        to: normalizedEmail,
+        subject: "NY Masons - Inquiry Received",
+        html: emailHtml
+      }).catch(err => console.error('Failed to send email:', err.message));
     }
 
+    // Send notifications to district and region chairmen
+    void sendChairmenNotifications(pool, inquiryData).catch(err => {
+      console.error('Error sending chairman notifications:', err.message);
+    });
+
     // call endpoint from lodge portal to invalidate inquiries cache after new inquiry is created
-    try {
-      fetch(`${process.env.LODGE_PORTAL_URL}/api/cache/invalidate?namespaces=inquiries`, {
-        method: 'POST'
-      });
-    } catch (err) {
+    void fetch(`${process.env.LODGE_PORTAL_URL}/api/cache/invalidate?namespaces=inquiries`, {
+      method: 'POST'
+    }).catch(err => {
       console.error('Error invalidating inquiries cache:', err.message);
-    }
+    });
 
     return res.status(201).json({ message: 'UserInquiry created' });
   } catch (err) {
