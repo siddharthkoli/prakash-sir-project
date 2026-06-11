@@ -45,6 +45,16 @@ CREATE TABLE UserInquiry (
 	CONSTRAINT FK_UserInquiry_AllocatedLodge FOREIGN KEY (allocated_lodge_id) REFERENCES Lodges(id) ON DELETE SET NULL
 );
 
+IF NOT EXISTS (
+	SELECT 1
+	FROM sys.indexes
+	WHERE name = 'UX_UserInquiry_Email'
+	  AND object_id = OBJECT_ID('UserInquiry')
+)
+BEGIN
+	CREATE UNIQUE INDEX UX_UserInquiry_Email ON UserInquiry(email);
+END;
+
 -- automatically populate region/district (and optionally assign a lodge) based on whichever
 -- county value is relevant (preferred lodge county overrides the main county).
 -- the trigger is created only if the helper tables exist; the body uses left joins so it

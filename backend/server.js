@@ -278,7 +278,21 @@ app.post('/api/userInquiry', async (req, res) => {
       return res.status(400).json({ message: 'firstName, lastName, email, phone, and address are required' });
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase();
+
     const pool = await sql.connect(sqlConfig);
+
+    const existingInquiry = await pool.request()
+      .input('email', sql.NVarChar, normalizedEmail)
+      .query(`
+        SELECT TOP 1 id
+        FROM UserInquiry
+        WHERE LOWER(LTRIM(RTRIM(email))) = @email
+      `);
+
+    if (existingInquiry.recordset.length > 0) {
+      return res.status(409).json({ message: 'An inquiry with this email already exists.' });
+    }
 
     // figure out which county we should use when doing a regional lookup
     const effectiveCounty = (preferredLodgeAddress && preferredLodgeAddress.county)
@@ -327,7 +341,7 @@ app.post('/api/userInquiry', async (req, res) => {
     const result = await pool.request()
       .input('firstName', sql.NVarChar, firstName)
       .input('lastName', sql.NVarChar, lastName)
-      .input('email', sql.NVarChar, email)
+      .input('email', sql.NVarChar, normalizedEmail)
       .input('phone', sql.NVarChar, phone)
       .input('alternatePhone', sql.NVarChar, alternatePhone || null)
       .input('bestTimeToContact', sql.NVarChar, bestTimeToContact)
@@ -412,6 +426,9 @@ app.post('/api/userInquiry', async (req, res) => {
     return res.status(201).json({ message: 'UserInquiry created' });
   } catch (err) {
     console.error(err);
+    if (err && (err.number === 2627 || err.number === 2601)) {
+      return res.status(409).json({ message: 'An inquiry with this email already exists.' });
+    }
     if (err.name === 'ValidationError') {
       return res.status(400).json({ message: err.message, errors: err.errors });
     }

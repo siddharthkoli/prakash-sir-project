@@ -260,7 +260,7 @@ export class FormComponent {
             const body = {
                 firstName: this.form.get('firstName')?.value,
                 lastName: this.form.get('lastName')?.value,
-                email: this.form.get('email')?.value,
+                email: String(this.form.get('email')?.value || '').trim().toLowerCase(),
                 phone: this.form.get('phone')?.value,
                 alternatePhone: this.form.get('alternatePhone')?.value || '',
                 bestTimeToContact: this.form.get('bestTimeToContact')?.value,
@@ -313,6 +313,8 @@ export class FormComponent {
                 error: (err: any) => {
                     if (err instanceof TimeoutError) {
                         this.errorMessage = 'Request timed out. Please check your network and try again.';
+                    } else if (err && err.status === 409) {
+                        this.errorMessage = err?.error?.message || 'An inquiry with this email already exists.';
                     } else if (err && err.status === 0) {
                         // status 0 usually means network error / CORS / server down
                         this.errorMessage = 'Unable to reach server. Please try again later.';
